@@ -1,0 +1,413 @@
+{
+  "session_info": {
+    "start_time": "2025-05-23T12:48:42.606056",
+    "end_time": "2025-05-23T12:49:31.240412",
+    "initial_url": "https://qa.sgpm.inovvati.com.br/#/orcamento-vigente-novo",
+    "last_url": "https://qa.sgpm.inovvati.com.br/#/orcamento-vigente-novo",
+    "last_title": "SGPMMS"
+  },
+  "actions": [
+    {
+      "type": "navigation",
+      "category": "Navegação",
+      "url": "https://qa.sgpm.inovvati.com.br/#/auth/login",
+      "title": "SGPMMS",
+      "timestamp": 1748018934.2612958,
+      "relative_time": 11.655240058898926,
+      "time_str": "11.7s"
+    },
+    {
+      "type": "click",
+      "category": "Input",
+      "element": {
+        "tag": "input",
+        "id": "f_5b7d19ae-c3fa-4c3a-ab4f-b0084876d3b9",
+        "class": "q-field__native q-placeholder",
+        "text": "",
+        "value": "",
+        "type": "text",
+        "name": "",
+        "href": null,
+        "aria-label": "usuário *",
+        "role": null,
+        "data-cy": "login_id",
+        "data-testid": null
+      },
+      "selector": "[data-cy=\"login_id\"]",
+      "selectors": [
+        "[data-cy=\"login_id\"]",
+        "#f_5b7d19ae-c3fa-4c3a-ab4f-b0084876d3b9",
+        "[aria-label=\"usuário *\"]",
+        ".q-field__native",
+        "input",
+        "input[type=\"text\"]",
+        "//*[@id=\"f_5b7d19ae-c3fa-4c3a-ab4f-b0084876d3b9\"]"
+      ],
+      "xpath": "//*[@id=\"f_5b7d19ae-c3fa-4c3a-ab4f-b0084876d3b9\"]",
+      "css_selector": "#f_5b7d19ae-c3fa-4c3a-ab4f-b0084876d3b9",
+      "url": "https://qa.sgpm.inovvati.com.br/#/auth/login",
+      "title": "SGPMMS",
+      "timestamp": 1748018938.9807348,
+      "relative_time": 16.37467908859253,
+      "time_str": "16.4s"
+    },
+    {
+      "type": "input",
+      "category": "Input",
+      "element": {
+        "tag": "input",
+        "id": "f_5b7d19ae-c3fa-4c3a-ab4f-b0084876d3b9",
+        "class": "q-field__native q-placeholder",
+        "value": "dev",
+        "type": "text",
+        "name": "",
+        "placeholder": "",
+        "aria-label": "usuário *",
+        "data-cy": "login_id",
+        "data-testid": null
+      },
+      "selector": "[data-cy=\"login_id\"]",
+      "selectors": [
+        "[data-cy=\"login_id\"]",
+        "#f_5b7d19ae-c3fa-4c3a-ab4f-b0084876d3b9",
+        "[aria-label=\"usuário *\"]",
+        ".q-field__native",
+        "input",
+        "input[type=\"text\"]",
+        "//*[@id=\"f_5b7d19ae-c3fa-4c3a-ab4f-b0084876d3b9\"]"
+      ],
+      "xpath": "//*[@id=\"f_5b7d19ae-c3fa-4c3a-ab4f-b0084876d3b9\"]",
+      "css_selector": "#f_5b7d19ae-c3fa-4c3a-ab4f-b0084876d3b9",
+      "url": "https://qa.sgpm.inovvati.com.br/#/auth/login",
+      "title": "SGPMMS",
+      "timestamp": 1748018940.0754843,
+      "relative_time": 17.469428539276123,
+      "time_str": "17.5s"
+    },
+    {
+      "type": "click",
+      "category": "Input",
+      "element": {
+        "tag": "input",
+        "id": "f_174906de-5486-449c-8dae-e6d6d2b9e7ac",
+        "class": "q-field__native q-placeholder",
+        "text": "",
+        "value": "",
+        "type": "password",
+        "name": "",
+        "href": null,
+        "aria-label": "senha *",
+        "role": null,
+        "data-cy": "password_id",
+        "data-testid": null
+      },
+      "selector": "[data-cy=\"password_id\"]",
+      "selectors": [
+        "[data-cy=\"password_id\"]",
+        "#f_174906de-5486-449c-8dae-e6d6d2b9e7ac",
+        "[aria-label=\"senha *\"]",
+        ".q-field__native",
+        "input",
+        "input[type=\"password\"]",
+        "//*[@id=\"f_174906de-5486-449c-8dae-e6d6d2b9e7ac\"]"
+      ],
+      "xpath": "//*[@id=\"f_174906de-5486-449c-8dae-e6d6d2b9e7ac\"]",
+      "css_selector": "#f_174906de-5486-449c-8dae-e6d6d2b9e7ac",
+      "url": "https://qa.sgpm.inovvati.com.br/#/auth/login",
+      "title": "SGPMMS",
+      "timestamp": 1748018940.6074386,
+      "relative_time": 18.00138282775879,
+      "time_str": "18.0s"
+    },
+    {
+      "type": "input",
+      "category": "Input",
+      "element": {
+        "tag": "input",
+        "id": "f_174906de-5486-449c-8dae-e6d6d2b9e7ac",
+        "class": "q-field__native q-placeholder",
+        "value": "P@sg142536",
+        "type": "password",
+        "name": "",
+        "placeholder": "",
+        "aria-label": "senha *",
+        "data-cy": "password_id",
+        "data-testid": null
+      },
+      "selector": "[data-cy=\"password_id\"]",
+      "selectors": [
+        "[data-cy=\"password_id\"]",
+        "#f_174906de-5486-449c-8dae-e6d6d2b9e7ac",
+        "[aria-label=\"senha *\"]",
+        ".q-field__native",
+        "input",
+        "input[type=\"password\"]",
+        "//*[@id=\"f_174906de-5486-449c-8dae-e6d6d2b9e7ac\"]"
+      ],
+      "xpath": "//*[@id=\"f_174906de-5486-449c-8dae-e6d6d2b9e7ac\"]",
+      "css_selector": "#f_174906de-5486-449c-8dae-e6d6d2b9e7ac",
+      "url": "https://qa.sgpm.inovvati.com.br/#/auth/login",
+      "title": "SGPMMS",
+      "timestamp": 1748018944.4307425,
+      "relative_time": 21.824686765670776,
+      "time_str": "21.8s"
+    },
+    {
+      "type": "navigation",
+      "category": "Navegação",
+      "url": "https://qa.sgpm.inovvati.com.br/#/config/programa-financiamento-selecionar",
+      "title": "SGPMMS",
+      "timestamp": 1748018949.2744582,
+      "relative_time": 26.668402433395386,
+      "time_str": "26.7s"
+    },
+    {
+      "type": "click",
+      "category": "Clique",
+      "element": {
+        "tag": "div",
+        "id": "",
+        "class": "q-field__control-container col relative-position row no-wrap q-anchor--skip",
+        "text": "PROFISCO II-MS\nPrograma Financiamento",
+        "value": null,
+        "type": null,
+        "name": null,
+        "href": null,
+        "aria-label": null,
+        "role": null,
+        "data-cy": null,
+        "data-testid": null
+      },
+      "selector": ".q-field__control-container",
+      "selectors": [
+        ".q-field__control-container",
+        "div",
+        "/html/body/div/div/div/div/main/form/div/label/div/div/div"
+      ],
+      "xpath": "/html/body/div/div/div/div/main/form/div/label/div/div/div",
+      "css_selector": "div#q-app > div > div > main > form > div > label > div > div > div",
+      "url": "https://qa.sgpm.inovvati.com.br/#/config/programa-financiamento-selecionar",
+      "title": "SGPMMS",
+      "timestamp": 1748018950.3327286,
+      "relative_time": 27.726672887802124,
+      "time_str": "27.7s"
+    },
+    {
+      "type": "click",
+      "category": "Clique",
+      "element": {
+        "tag": "div",
+        "id": "",
+        "class": "q-item__label",
+        "text": "PROFISCO II-MS",
+        "value": null,
+        "type": null,
+        "name": null,
+        "href": null,
+        "aria-label": null,
+        "role": null,
+        "data-cy": null,
+        "data-testid": null
+      },
+      "selector": ".q-item__label",
+      "selectors": [
+        ".q-item__label",
+        "div",
+        "/html/body/div[3]/div/div[2]/div/div[2]/div"
+      ],
+      "xpath": "/html/body/div[3]/div/div[2]/div/div[2]/div",
+      "css_selector": "div#f_8f06ef0e-d8a6-4925-b31c-7f6993c954d1_0 > div:nth-of-type(2) > div",
+      "url": "https://qa.sgpm.inovvati.com.br/#/config/programa-financiamento-selecionar",
+      "title": "SGPMMS",
+      "timestamp": 1748018950.9070113,
+      "relative_time": 28.300955533981323,
+      "time_str": "28.3s"
+    },
+    {
+      "type": "navigation",
+      "category": "Navegação",
+      "url": "https://qa.sgpm.inovvati.com.br/#/",
+      "title": "SGPMMS",
+      "timestamp": 1748018951.4456675,
+      "relative_time": 28.839611768722534,
+      "time_str": "28.8s"
+    },
+    {
+      "type": "click",
+      "category": "Clique",
+      "element": {
+        "tag": "button",
+        "id": "",
+        "class": "q-btn q-btn-item non-selectable no-outline q-btn--standard q-btn--rectangle bg-primary text-white q-btn--actionable q-focusable q-hoverable",
+        "text": "IR",
+        "value": "",
+        "type": "submit",
+        "name": "",
+        "href": null,
+        "aria-label": null,
+        "role": "button",
+        "data-cy": null,
+        "data-testid": null
+      },
+      "selector": "[role=\"button\"]",
+      "selectors": [
+        "[role=\"button\"]",
+        ".q-btn",
+        "button",
+        "button[type=\"submit\"]",
+        "/html/body/div/div/div/div/main/form/div/div/button"
+      ],
+      "xpath": "/html/body/div/div/div/div/main/form/div/div/button",
+      "css_selector": "div#q-app > div > div > main > form > div > div > button",
+      "url": "https://qa.sgpm.inovvati.com.br/#/",
+      "title": "SGPMMS",
+      "timestamp": 1748018951.9713511,
+      "relative_time": 29.36529541015625,
+      "time_str": "29.4s"
+    },
+    {
+      "type": "click",
+      "category": "Clique",
+      "element": {
+        "tag": "div",
+        "id": "",
+        "class": "q-item__section column q-item__section--main justify-center",
+        "text": "Orçamento",
+        "value": null,
+        "type": null,
+        "name": null,
+        "href": null,
+        "aria-label": null,
+        "role": null,
+        "data-cy": null,
+        "data-testid": null
+      },
+      "selector": ".q-item__section",
+      "selectors": [
+        ".q-item__section",
+        "div",
+        "/html/body/div/div/div/div/aside/div/div/div[4]/div/div/div/div/div/div[3]"
+      ],
+      "xpath": "/html/body/div/div/div/div/aside/div/div/div[4]/div/div/div/div/div/div[3]",
+      "css_selector": "div#2 > div > div > div > div > div > div:nth-of-type(3)",
+      "url": "https://qa.sgpm.inovvati.com.br/#/",
+      "title": "SGPMMS",
+      "timestamp": 1748018953.6485562,
+      "relative_time": 31.042500495910645,
+      "time_str": "31.0s"
+    },
+    {
+      "type": "navigation",
+      "category": "Navegação",
+      "url": "https://qa.sgpm.inovvati.com.br/#/orcamento-vigente-listar",
+      "title": "SGPMMS",
+      "timestamp": 1748018954.5696616,
+      "relative_time": 31.963605880737305,
+      "time_str": "32.0s"
+    },
+    {
+      "type": "click",
+      "category": "Clique",
+      "element": {
+        "tag": "span",
+        "id": "",
+        "class": "",
+        "text": "Vigente",
+        "value": null,
+        "type": null,
+        "name": null,
+        "href": null,
+        "aria-label": null,
+        "role": null,
+        "data-cy": null,
+        "data-testid": null
+      },
+      "selector": "span",
+      "selectors": [
+        "span",
+        "/html/body/div/div/div/div/aside/div/div/div[4]/div/div/div/div/div[2]/div[2]/div/a/div[3]/span",
+        "div#6 > div > a > div:nth-of-type(3) > span"
+      ],
+      "xpath": "/html/body/div/div/div/div/aside/div/div/div[4]/div/div/div/div/div[2]/div[2]/div/a/div[3]/span",
+      "css_selector": "div#6 > div > a > div:nth-of-type(3) > span",
+      "url": "https://qa.sgpm.inovvati.com.br/#/orcamento-vigente-listar",
+      "title": "SGPMMS",
+      "timestamp": 1748018955.101175,
+      "relative_time": 32.49511933326721,
+      "time_str": "32.5s"
+    },
+    {
+      "type": "navigation",
+      "category": "Navegação",
+      "url": "https://qa.sgpm.inovvati.com.br/#/orcamento-vigente-novo",
+      "title": "SGPMMS",
+      "timestamp": 1748018961.598624,
+      "relative_time": 38.992568254470825,
+      "time_str": "39.0s"
+    },
+    {
+      "type": "click",
+      "category": "Clique",
+      "element": {
+        "tag": "span",
+        "id": "",
+        "class": "block",
+        "text": "NOVO",
+        "value": null,
+        "type": null,
+        "name": null,
+        "href": null,
+        "aria-label": null,
+        "role": null,
+        "data-cy": null,
+        "data-testid": null
+      },
+      "selector": ".block",
+      "selectors": [
+        ".block",
+        "span",
+        "/html/body/div/div/div/div[2]/button/span[2]/span"
+      ],
+      "xpath": "/html/body/div/div/div/div[2]/button/span[2]/span",
+      "css_selector": "div#q-app > div > div:nth-of-type(2) > button > span:nth-of-type(2) > span",
+      "url": "https://qa.sgpm.inovvati.com.br/#/orcamento-vigente-novo",
+      "title": "SGPMMS",
+      "timestamp": 1748018962.2741473,
+      "relative_time": 39.66809153556824,
+      "time_str": "39.7s"
+    },
+    {
+      "type": "input",
+      "category": "Input",
+      "element": {
+        "tag": "input",
+        "id": "f_a484ae68-89af-4dfc-8287-e31197a02f68",
+        "class": "q-field__native q-placeholder text-right",
+        "value": "0,00",
+        "type": "text",
+        "name": "",
+        "placeholder": "",
+        "aria-label": "Valor Total (USD)",
+        "data-cy": null,
+        "data-testid": null
+      },
+      "selector": "#f_a484ae68-89af-4dfc-8287-e31197a02f68",
+      "selectors": [
+        "#f_a484ae68-89af-4dfc-8287-e31197a02f68",
+        "[aria-label=\"Valor Total (USD)\"]",
+        ".q-field__native",
+        "input",
+        "input[type=\"text\"]",
+        "//*[@id=\"f_a484ae68-89af-4dfc-8287-e31197a02f68\"]"
+      ],
+      "xpath": "//*[@id=\"f_a484ae68-89af-4dfc-8287-e31197a02f68\"]",
+      "css_selector": "#f_a484ae68-89af-4dfc-8287-e31197a02f68",
+      "url": "https://qa.sgpm.inovvati.com.br/#/orcamento-vigente-novo",
+      "title": "SGPMMS",
+      "timestamp": 1748018962.291615,
+      "relative_time": 39.68555927276611,
+      "time_str": "39.7s"
+    }
+  ],
+  "network_requests": []
+}

@@ -1,0 +1,2359 @@
+{
+  "session_info": {
+    "session_id": "teste de login",
+    "start_time": "2025-05-22T10:38:24.830255",
+    "browser_info": {
+      "browser_name": "chrome",
+      "browser_version": "136.0.7103.114",
+      "platform": "windows"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+  },
+  "actions": [
+    {
+      "timestamp": "2025-05-22T10:38:24.843125",
+      "time_since_start_ms": 12,
+      "time_since_last_action_ms": 12,
+      "action_type": "session_start",
+      "details": {
+        "browser_info": {
+          "browser_name": "chrome",
+          "browser_version": "136.0.7103.114",
+          "platform": "windows"
+        },
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:24.843171",
+      "time_since_start_ms": 12,
+      "time_since_last_action_ms": 0,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                if (!window._networkMonitorInitialized) {\n                    window._pendingRequests = {};\n                    window._completedRequests = [];\n                    \n                  ..."
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:24.847663",
+      "time_since_start_ms": 17,
+      "time_since_last_action_ms": 4,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                if (!window._networkMonitorInitialized) {\n                    window._pendingRequests = {};\n                    window._completedRequests = [];\n                    \n                  ..."
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:24.847993",
+      "time_since_start_ms": 17,
+      "time_since_last_action_ms": 0,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:24.848452",
+      "time_since_start_ms": 18,
+      "time_since_last_action_ms": 0,
+      "action_type": "navigation_start",
+      "details": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "direction": "to"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:24.855060",
+      "time_since_start_ms": 24,
+      "time_since_last_action_ms": 6,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:25.355662",
+      "time_since_start_ms": 525,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:57.809964",
+      "time_since_start_ms": 32979,
+      "time_since_last_action_ms": 32454,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": null
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:57.815237",
+      "time_since_start_ms": 32984,
+      "time_since_last_action_ms": 5,
+      "action_type": "navigation_complete",
+      "details": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS",
+        "direction": "to"
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:57.825084",
+      "time_since_start_ms": 32994,
+      "time_since_last_action_ms": 9,
+      "action_type": "page_metrics",
+      "details": {
+        "documentSize": {
+          "height": 533,
+          "width": 1280
+        },
+        "domain": "qa.sgpm.inovvati.com.br",
+        "readyState": "complete",
+        "referrer": "",
+        "viewport": {
+          "height": 533,
+          "width": 1280
+        }
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:58.310597",
+      "time_since_start_ms": 33480,
+      "time_since_last_action_ms": 485,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:58.322345",
+      "time_since_start_ms": 33492,
+      "time_since_last_action_ms": 11,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:58.822953",
+      "time_since_start_ms": 33992,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:58.830394",
+      "time_since_start_ms": 34000,
+      "time_since_last_action_ms": 7,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:59.330897",
+      "time_since_start_ms": 34500,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:59.338006",
+      "time_since_start_ms": 34507,
+      "time_since_last_action_ms": 7,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:59.838326",
+      "time_since_start_ms": 35008,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:38:59.845186",
+      "time_since_start_ms": 35014,
+      "time_since_last_action_ms": 6,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:00.345519",
+      "time_since_start_ms": 35515,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:00.353538",
+      "time_since_start_ms": 35523,
+      "time_since_last_action_ms": 8,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:00.854145",
+      "time_since_start_ms": 36023,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:00.861317",
+      "time_since_start_ms": 36031,
+      "time_since_last_action_ms": 7,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:01.361908",
+      "time_since_start_ms": 36531,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:01.373729",
+      "time_since_start_ms": 36543,
+      "time_since_last_action_ms": 11,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:01.874501",
+      "time_since_start_ms": 37044,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:01.880973",
+      "time_since_start_ms": 37050,
+      "time_since_last_action_ms": 6,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:02.381422",
+      "time_since_start_ms": 37551,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:02.387799",
+      "time_since_start_ms": 37557,
+      "time_since_last_action_ms": 6,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:02.888388",
+      "time_since_start_ms": 38058,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:02.895746",
+      "time_since_start_ms": 38065,
+      "time_since_last_action_ms": 7,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:03.395993",
+      "time_since_start_ms": 38565,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:03.401664",
+      "time_since_start_ms": 38571,
+      "time_since_last_action_ms": 5,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:03.902528",
+      "time_since_start_ms": 39072,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:03.908139",
+      "time_since_start_ms": 39077,
+      "time_since_last_action_ms": 5,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:04.408398",
+      "time_since_start_ms": 39578,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:04.417822",
+      "time_since_start_ms": 39587,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:04.918380",
+      "time_since_start_ms": 40088,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:04.926317",
+      "time_since_start_ms": 40096,
+      "time_since_last_action_ms": 7,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:05.427174",
+      "time_since_start_ms": 40596,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:05.437452",
+      "time_since_start_ms": 40607,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:05.937747",
+      "time_since_start_ms": 41107,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:05.948562",
+      "time_since_start_ms": 41118,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:06.449001",
+      "time_since_start_ms": 41618,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:06.460673",
+      "time_since_start_ms": 41630,
+      "time_since_last_action_ms": 11,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:06.961323",
+      "time_since_start_ms": 42131,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:06.972156",
+      "time_since_start_ms": 42141,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:07.472830",
+      "time_since_start_ms": 42642,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:07.484089",
+      "time_since_start_ms": 42653,
+      "time_since_last_action_ms": 11,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:07.984453",
+      "time_since_start_ms": 43154,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:07.992472",
+      "time_since_start_ms": 43162,
+      "time_since_last_action_ms": 8,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:08.493359",
+      "time_since_start_ms": 43663,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:08.503628",
+      "time_since_start_ms": 43673,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:09.004053",
+      "time_since_start_ms": 44173,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:09.012148",
+      "time_since_start_ms": 44181,
+      "time_since_last_action_ms": 8,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:09.512557",
+      "time_since_start_ms": 44682,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:09.519490",
+      "time_since_start_ms": 44689,
+      "time_since_last_action_ms": 6,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:10.020193",
+      "time_since_start_ms": 45189,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:10.029201",
+      "time_since_start_ms": 45198,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:10.529597",
+      "time_since_start_ms": 45699,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:10.538112",
+      "time_since_start_ms": 45707,
+      "time_since_last_action_ms": 8,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:11.038624",
+      "time_since_start_ms": 46208,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:11.049926",
+      "time_since_start_ms": 46219,
+      "time_since_last_action_ms": 11,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:11.550186",
+      "time_since_start_ms": 46719,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:11.559673",
+      "time_since_start_ms": 46729,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:12.060281",
+      "time_since_start_ms": 47230,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:12.072062",
+      "time_since_start_ms": 47241,
+      "time_since_last_action_ms": 11,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:12.572211",
+      "time_since_start_ms": 47741,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:12.579046",
+      "time_since_start_ms": 47748,
+      "time_since_last_action_ms": 6,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:13.079752",
+      "time_since_start_ms": 48249,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:13.087602",
+      "time_since_start_ms": 48257,
+      "time_since_last_action_ms": 7,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:13.588032",
+      "time_since_start_ms": 48757,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:13.606323",
+      "time_since_start_ms": 48776,
+      "time_since_last_action_ms": 18,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:14.107230",
+      "time_since_start_ms": 49276,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:14.117587",
+      "time_since_start_ms": 49287,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:14.617840",
+      "time_since_start_ms": 49787,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:14.623691",
+      "time_since_start_ms": 49793,
+      "time_since_last_action_ms": 5,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:15.124166",
+      "time_since_start_ms": 50293,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:15.135071",
+      "time_since_start_ms": 50304,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:15.635698",
+      "time_since_start_ms": 50805,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:15.647951",
+      "time_since_start_ms": 50817,
+      "time_since_last_action_ms": 12,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:16.148327",
+      "time_since_start_ms": 51318,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:16.158231",
+      "time_since_start_ms": 51327,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:16.658446",
+      "time_since_start_ms": 51828,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:16.667689",
+      "time_since_start_ms": 51837,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:17.168073",
+      "time_since_start_ms": 52337,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:17.177090",
+      "time_since_start_ms": 52346,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:17.677642",
+      "time_since_start_ms": 52847,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:17.691612",
+      "time_since_start_ms": 52861,
+      "time_since_last_action_ms": 13,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:18.191838",
+      "time_since_start_ms": 53361,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:18.203480",
+      "time_since_start_ms": 53373,
+      "time_since_last_action_ms": 11,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:18.704437",
+      "time_since_start_ms": 53874,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:18.717674",
+      "time_since_start_ms": 53887,
+      "time_since_last_action_ms": 13,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:19.218328",
+      "time_since_start_ms": 54388,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:19.231999",
+      "time_since_start_ms": 54401,
+      "time_since_last_action_ms": 13,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:19.732526",
+      "time_since_start_ms": 54902,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:19.745252",
+      "time_since_start_ms": 54914,
+      "time_since_last_action_ms": 12,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:20.245662",
+      "time_since_start_ms": 55415,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:20.258661",
+      "time_since_start_ms": 55428,
+      "time_since_last_action_ms": 12,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:20.759160",
+      "time_since_start_ms": 55928,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:20.770655",
+      "time_since_start_ms": 55940,
+      "time_since_last_action_ms": 11,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:21.271420",
+      "time_since_start_ms": 56441,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:21.285879",
+      "time_since_start_ms": 56455,
+      "time_since_last_action_ms": 14,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:21.786554",
+      "time_since_start_ms": 56956,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:21.800259",
+      "time_since_start_ms": 56970,
+      "time_since_last_action_ms": 13,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:22.300612",
+      "time_since_start_ms": 57470,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:22.311536",
+      "time_since_start_ms": 57481,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:22.811994",
+      "time_since_start_ms": 57981,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:22.820010",
+      "time_since_start_ms": 57989,
+      "time_since_last_action_ms": 8,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:23.320504",
+      "time_since_start_ms": 58490,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:23.328594",
+      "time_since_start_ms": 58498,
+      "time_since_last_action_ms": 8,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:23.829072",
+      "time_since_start_ms": 58998,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:23.838365",
+      "time_since_start_ms": 59008,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:24.338859",
+      "time_since_start_ms": 59508,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:24.349357",
+      "time_since_start_ms": 59519,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:24.849739",
+      "time_since_start_ms": 60019,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:24.860119",
+      "time_since_start_ms": 60029,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:25.360437",
+      "time_since_start_ms": 60530,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:25.368319",
+      "time_since_start_ms": 60538,
+      "time_since_last_action_ms": 7,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:25.868882",
+      "time_since_start_ms": 61038,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:25.878957",
+      "time_since_start_ms": 61048,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:26.379112",
+      "time_since_start_ms": 61548,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:26.385981",
+      "time_since_start_ms": 61555,
+      "time_since_last_action_ms": 6,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:26.886292",
+      "time_since_start_ms": 62056,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:26.891093",
+      "time_since_start_ms": 62060,
+      "time_since_last_action_ms": 4,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:27.391593",
+      "time_since_start_ms": 62561,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:27.401051",
+      "time_since_start_ms": 62570,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:27.901754",
+      "time_since_start_ms": 63071,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:27.911284",
+      "time_since_start_ms": 63081,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:28.411685",
+      "time_since_start_ms": 63581,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:28.420472",
+      "time_since_start_ms": 63590,
+      "time_since_last_action_ms": 8,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:28.920891",
+      "time_since_start_ms": 64090,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:28.934451",
+      "time_since_start_ms": 64104,
+      "time_since_last_action_ms": 13,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:29.434763",
+      "time_since_start_ms": 64604,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:29.440235",
+      "time_since_start_ms": 64609,
+      "time_since_last_action_ms": 5,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:29.940835",
+      "time_since_start_ms": 65110,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:29.950273",
+      "time_since_start_ms": 65120,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:30.450706",
+      "time_since_start_ms": 65620,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:30.459975",
+      "time_since_start_ms": 65629,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:30.960218",
+      "time_since_start_ms": 66129,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:30.965801",
+      "time_since_start_ms": 66135,
+      "time_since_last_action_ms": 5,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:31.466439",
+      "time_since_start_ms": 66636,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:31.473691",
+      "time_since_start_ms": 66643,
+      "time_since_last_action_ms": 7,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:31.974088",
+      "time_since_start_ms": 67143,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:31.983971",
+      "time_since_start_ms": 67153,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:32.484270",
+      "time_since_start_ms": 67654,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:32.492530",
+      "time_since_start_ms": 67662,
+      "time_since_last_action_ms": 8,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:32.993067",
+      "time_since_start_ms": 68162,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:33.007010",
+      "time_since_start_ms": 68176,
+      "time_since_last_action_ms": 13,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:33.507332",
+      "time_since_start_ms": 68677,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:33.519344",
+      "time_since_start_ms": 68689,
+      "time_since_last_action_ms": 12,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:34.019749",
+      "time_since_start_ms": 69189,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:34.033271",
+      "time_since_start_ms": 69203,
+      "time_since_last_action_ms": 13,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:34.533843",
+      "time_since_start_ms": 69703,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:34.548061",
+      "time_since_start_ms": 69717,
+      "time_since_last_action_ms": 14,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:35.048663",
+      "time_since_start_ms": 70218,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:35.063695",
+      "time_since_start_ms": 70233,
+      "time_since_last_action_ms": 15,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:35.564391",
+      "time_since_start_ms": 70734,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:35.578978",
+      "time_since_start_ms": 70748,
+      "time_since_last_action_ms": 14,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:36.079326",
+      "time_since_start_ms": 71249,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:36.087460",
+      "time_since_start_ms": 71257,
+      "time_since_last_action_ms": 8,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:36.587654",
+      "time_since_start_ms": 71757,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:36.594160",
+      "time_since_start_ms": 71763,
+      "time_since_last_action_ms": 6,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:37.094871",
+      "time_since_start_ms": 72264,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:37.113407",
+      "time_since_start_ms": 72283,
+      "time_since_last_action_ms": 18,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:37.613709",
+      "time_since_start_ms": 72783,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:37.624445",
+      "time_since_start_ms": 72794,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:38.124928",
+      "time_since_start_ms": 73294,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:38.132962",
+      "time_since_start_ms": 73302,
+      "time_since_last_action_ms": 8,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:38.633463",
+      "time_since_start_ms": 73803,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:38.643778",
+      "time_since_start_ms": 73813,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:39.144199",
+      "time_since_start_ms": 74313,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:39.153632",
+      "time_since_start_ms": 74323,
+      "time_since_last_action_ms": 9,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:39.654225",
+      "time_since_start_ms": 74823,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:39.667515",
+      "time_since_start_ms": 74837,
+      "time_since_last_action_ms": 13,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:40.168214",
+      "time_since_start_ms": 75337,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:40.175801",
+      "time_since_start_ms": 75345,
+      "time_since_last_action_ms": 7,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:40.676261",
+      "time_since_start_ms": 75846,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:40.686415",
+      "time_since_start_ms": 75856,
+      "time_since_last_action_ms": 10,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:41.187219",
+      "time_since_start_ms": 76356,
+      "time_since_last_action_ms": 500,
+      "action_type": "script_execution_start",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:41.210439",
+      "time_since_start_ms": 76380,
+      "time_since_last_action_ms": 23,
+      "action_type": "script_execution_complete",
+      "details": {
+        "script": "\n                const completed = window._completedRequests || [];\n                window._completedRequests = [];\n                return completed;\n            "
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    },
+    {
+      "timestamp": "2025-05-22T10:39:41.711954",
+      "time_since_start_ms": 76881,
+      "time_since_last_action_ms": 501,
+      "action_type": "session_end",
+      "details": {
+        "total_actions": 180,
+        "total_network_requests": 0,
+        "session_duration_seconds": 76.88169288635254
+      },
+      "page_context": {
+        "url": "https://qa.sgpm.inovvati.com.br",
+        "title": "SGPMMS"
+      }
+    }
+  ]
+}

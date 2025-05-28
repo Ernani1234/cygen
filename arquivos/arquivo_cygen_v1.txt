@@ -1,0 +1,1476 @@
+Diretório --->//(cypress.config.js):
+
+const { defineConfig } = require("cypress")
+
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+    specPattern: "cypress/e2e/**/*.cy.js"
+  },
+});
+--------------------------------------------------
+
+Diretório --->//(login_no_sistema.cy.js):
+
+
+describe('login no sistema', () => {
+  it('Deve executar o fluxo login no sistema', () => {
+    cy.visit('https://qa.sgpm.inovvati.com.br');
+    cy.get('span').click();cy.get('span').click();cy.get('#f_d94cf370-8ca5-46c8-a5b6-94aa66b08bb8').click();cy.get('#f_d94cf370-8ca5-46c8-a5b6-94aa66b08bb8').type('d');cy.get('#f_d94cf370-8ca5-46c8-a5b6-94aa66b08bb8').type('de');cy.get('#f_d94cf370-8ca5-46c8-a5b6-94aa66b08bb8').type('dev');cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').click();cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').type('P');cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').type('P@');cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').type('P@s');cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').type('P@sg');cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').type('P@sg1');cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').type('P@sg14');cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').type('P@sg142');cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').type('P@sg1425');cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').type('P@sg14253');cy.get('#f_77785306-b074-4f72-baad-018c2393cf1c').type('P@sg142536');cy.get('.q-btn__content.text-center.col.items-center.q-anchor--skip.justify-center.row').click();cy.get('.notranslate.material-icons.q-icon.q-select__dropdown-icon.rotate-180').click();cy.get('.q-item__label').click();cy.get('.block').click();
+    cy.url().should('include', '/success');
+  }));
+});
+
+--------------------------------------------------
+
+Diretório --->//(main.py):
+
+import tkinter as tk
+from ttkbootstrap import Style, Window, ttk
+from ttkbootstrap.constants import *
+from ttkbootstrap.dialogs import Messagebox
+import json
+import time
+import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.edge.service import Service as EdgeService
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.edge.options import Options as EdgeOptions
+from selenium.common.exceptions import SessionNotCreatedException, WebDriverException, TimeoutException
+import keyboard
+import threading
+import os
+import subprocess
+import re
+import winreg
+from bs4 import BeautifulSoup
+import pyperclip
+import queue
+from functools import partial
+import difflib
+import sys
+import shutil
+
+# Variáveis globais para captura de tráfego de rede
+network_requests = []
+pending_requests = {}
+
+class TestGeneratorApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("CyGen")
+        self.style = Style(theme="darkly") # Ou qualquer tema ttkbootstrap
+        self.driver = None
+        self.actions_log = []
+        self.cypress_code = None
+        self.code_history = [] # Para funcionalidade de desfazer/refazer
+        self.history_index = -1
+        self.api_keys = []
+        self.current_api_key_index = 0
+        
+        # Fila para comunicação thread-safe com a UI
+        self.ui_queue = queue.Queue()
+        
+        # Flag para controle de captura
+        self.capturing = False
+        self.stop_capture_event = threading.Event()
+        
+        # Configurações padrão para geração de código
+        self.config = {
+            "default_timeout": 5000,  # Timeout padrão em ms
+            "use_conditional_waits": True,  # Usar esperas condicionais em vez de fixas
+            "selector_priority": ["data-cy", "data-testid", "id", "name", "role", "aria-label", "class", "tag", "type"],  # Prioridade de seletores
+            "verify_visibility": True,  # Verificar visibilidade dos elementos
+            "selector_enabled": { 
+                "data-cy": True,
+                "data-testid": True,
+                "id": True,
+                "name": True,
+                "role": True,
+                "aria-label": True,
+                "class": True,
+                "tag": True,
+                "type": True
+            },
+            "network_capture_interval": 500,  # Intervalo em ms para captura de tráfego de rede
+            "capture_network": True,  # Opção para habilitar/desabilitar captura de rede
+            "ai_edit_api_endpoint": "https://api.openai.com/v1/chat/completions", # Exemplo, pode ser configurável
+            "ai_edit_model": "gpt-3.5-turbo" # Exemplo, pode ser configurável
+        }
+
+        # Configura layout principal
+        self.main_frame = ttk.Frame(self.root, padding=20)
+        self.main_frame.grid(row=0, column=0, sticky="nsew")
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure(0, weight=1)
+        self.main_frame.columnconfigure(1, weight=1) # Coluna dos campos de entrada expansível
+
+        # Título
+        ttk.Label(self.main_frame, text="CyGen", font=("Helvetica", 20, "bold")).grid(row=0, column=0, columnspan=3, pady=10)
+
+        # Campos de entrada
+        ttk.Label(self.main_frame, text="URL do Sistema:").grid(row=1, column=0, sticky="w", pady=5)
+        self.protocol_var = tk.StringVar(value="https://")
+        self.protocol_selector = ttk.Combobox(self.main_frame, textvariable=self.protocol_var, values=["http://", "https://"], width=10, state="readonly")
+        self.protocol_selector.grid(row=1, column=1, sticky="w", pady=5)
+        self.url_entry = ttk.Entry(self.main_frame, width=40)
+        self.url_entry.grid(row=1, column=1, sticky="ew", padx=(100,0), pady=5) # Adicionado padx para separar do combobox
+
+        ttk.Label(self.main_frame, text="Nome do Fluxo:").grid(row=2, column=0, sticky="w", pady=5)
+        self.flow_entry = ttk.Entry(self.main_frame, width=50)
+        self.flow_entry.grid(row=2, column=1, sticky="ew", pady=5)
+
+        ttk.Label(self.main_frame, text="Chave da API (OpenAI):").grid(row=3, column=0, sticky="w", pady=5)
+        self.api_key_entry = ttk.Entry(self.main_frame, width=50, show="*")
+        self.api_key_entry.grid(row=3, column=1, sticky="ew", pady=5)
+
+        # Botões principais
+        self.start_button = ttk.Button(
+            self.main_frame, 
+            text="Iniciar Mapeamento", 
+            style="primary.TButton", 
+            command=self.start_mapping
+        )
+        self.start_button.grid(row=4, column=0, columnspan=2, pady=10, sticky="ew")
+
+        # Botão de parar mapeamento (inicialmente oculto)
+        self.stop_button = ttk.Button(
+            self.main_frame, 
+            text="Parar Mapeamento", 
+            style="danger.TButton", 
+            command=self.stop_mapping # Será definido depois
+        )
+        self.stop_button.grid(row=4, column=0, columnspan=2, pady=10, sticky="ew")
+        self.stop_button.grid_remove()  # Inicialmente oculto
+
+        self.generate_button = ttk.Button(
+            self.main_frame, 
+            text="Gerar Teste Cypress", 
+            style="success.TButton", 
+            command=self.generate_test, 
+            state="disabled"
+        )
+        self.generate_button.grid(row=5, column=0, columnspan=2, pady=10, sticky="ew")
+
+        self.save_button = ttk.Button(
+            self.main_frame, 
+            text="Salvar Teste", 
+            style="info.TButton", 
+            command=self.save_test, 
+            state="disabled"
+        )
+        self.save_button.grid(row=6, column=0, columnspan=2, pady=10, sticky="ew")
+
+        # Área de log com fonte monoespaçada para melhor legibilidade
+        ttk.Label(self.main_frame, text="Log de Ações:").grid(row=7, column=0, sticky="w", pady=5)
+        log_frame = ttk.Frame(self.main_frame)
+        log_frame.grid(row=8, column=0, columnspan=2, pady=5, sticky="nsew")
+        self.main_frame.rowconfigure(8, weight=1) # Linha do log expansível
+        
+        self.log_text = tk.Text(log_frame, height=10, width=60, state="disabled", font=("Consolas", 9))
+        scrollbar = ttk.Scrollbar(log_frame, orient="vertical", command=self.log_text.yview)
+        self.log_text.configure(yscrollcommand=scrollbar.set)
+        self.log_text.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        
+        # Configurar tag para mensagens de erro (vermelho leve)
+        self.log_text.tag_configure("error", background="#3A1212", foreground="#FF6B6B") # Um vermelho mais visível no tema dark
+        self.log_text.tag_configure("success", foreground="#4CAF50") # Verde para sucesso
+        self.log_text.tag_configure("info", foreground="#2196F3")    # Azul para informação
+        self.log_text.tag_configure("warning", foreground="#FFC107") # Amarelo para aviso
+        self.log_text.tag_configure("command", foreground="#9C27B0") # Roxo para comandos
+
+        # Barra de progresso
+        self.progress_frame = ttk.Frame(self.main_frame)
+        self.progress_frame.grid(row=9, column=0, columnspan=2, pady=5, sticky="ew")
+        
+        self.progress_bar = ttk.Progressbar(self.progress_frame, mode="indeterminate", length=200)
+        self.progress_bar.pack(fill="x", expand=True)
+        
+        self.progress_label = ttk.Label(self.progress_frame, text="", anchor="center")
+        self.progress_label.pack(fill="x", pady=2)
+        
+        self.progress_frame.grid_remove()  # Inicialmente oculto
+
+        # Status
+        self.status_label = ttk.Label(self.main_frame, text="Pronto", bootstyle="info")
+        self.status_label.grid(row=10, column=0, columnspan=2, pady=10)
+
+        # Configurações avançadas
+        self.config_button = ttk.Button(
+            self.main_frame,
+            text="Configurações",
+            style="secondary.TButton",
+            command=self.show_config_window
+        )
+        self.config_button.grid(row=11, column=0, columnspan=2, pady=5, sticky="ew")
+
+        # Iniciar processador de fila de UI
+        self.process_ui_queue()
+        
+        # Load API keys after UI initialization
+        self.load_api_keys()
+        if self.api_keys:
+            self.api_key_entry.insert(0, self.api_keys[0]) # Preenche com a primeira chave, se houver
+            self.safe_log_message(f"Chave API carregada: {self.api_keys[0][:4]}...", "INFO")
+        else:
+            self.safe_log_message("Nenhuma chave API encontrada ou falha ao carregar. Verifique o arquivo API_keys/api.txt", "ERROR")
+            self.api_key_entry.insert(0, "SUA_CHAVE_API_AQUI") # Placeholder se não houver chaves
+
+        # Adiciona listeners para responsividade
+        self.main_frame.bind("<Configure>", self.on_resize)
+
+    def on_resize(self, event):
+        # Esta função pode ser usada para ajustar elementos dinamicamente se necessário
+        # Por exemplo, ajustar o wrap length de labels ou o tamanho de text widgets
+        # Para a maioria dos widgets ttkbootstrap, o sticky="nsew" e column/rowconfigure com weight=1 já cuidam bem da responsividade.
+        pass
+
+    def process_ui_queue(self):
+        """Processa a fila de atualizações da UI de forma segura na thread principal"""
+        try:
+            while not self.ui_queue.empty():
+                task = self.ui_queue.get_nowait()
+                if task:
+                    task() # Executa a função lambda ou callable
+                self.ui_queue.task_done()
+        except queue.Empty:
+            pass # A fila está vazia, nada a fazer
+        finally:
+            # Agenda a próxima verificação da fila
+            self.root.after(100, self.process_ui_queue)
+
+    def safe_log_message(self, message, level="INFO"):
+        """Versão thread-safe de log_message que usa a fila de UI"""
+        # Assegura que a atualização da UI ocorra na thread principal
+        if threading.current_thread() is threading.main_thread():
+            # Se estamos na thread principal, podemos atualizar diretamente
+            self.log_message(message, level)
+        else:
+            # Se estamos em uma thread secundária, enfileiramos a atualização
+            self.ui_queue.put(lambda: self.log_message(message, level))
+
+    def safe_update_ui(self, widget_update_func):
+        """Função genérica para atualizar widgets de forma thread-safe"""
+        if threading.current_thread() is threading.main_thread():
+            widget_update_func()
+        else:
+            self.ui_queue.put(widget_update_func)
+
+    def log_message(self, message, level="INFO"):
+        """Atualiza o widget de log (deve ser chamado apenas da thread principal)"""
+        self.log_text.config(state="normal")
+        tag = level.lower() if level.lower() in ["error", "success", "info", "warning", "command"] else "info"
+        self.log_text.insert(tk.END, f"{message}\n", tag)
+        self.log_text.config(state="disabled")
+        self.log_text.see(tk.END) # Rola para a última mensagem
+
+    def show_progress(self, show=True, message="", start_animation=True):
+        """Controla a exibição da barra de progresso e mensagem de status de forma thread-safe"""
+        def _update():
+            if show:
+                self.progress_label.config(text=message)
+                self.progress_frame.grid() # Mostra o frame da barra de progresso
+                if start_animation:
+                    self.progress_bar.start(10) # Intervalo da animação
+                self.status_label.config(text=message, bootstyle="warning")
+            else:
+                self.progress_bar.stop()
+                self.progress_frame.grid_remove() # Oculta o frame da barra de progresso
+                self.status_label.config(text="Pronto", bootstyle="info")
+        
+        self.safe_update_ui(_update)
+
+    def show_config_window(self):
+        """Exibe janela de configurações avançadas com opções expandidas"""
+        config_window = tk.Toplevel(self.root)
+        config_window.title("Configurações Avançadas")
+        config_window.geometry("750x650") # Aumentado para acomodar mais opções
+        config_window.resizable(True, True)
+        
+        # Notebook para organizar as configurações em abas
+        notebook = ttk.Notebook(config_window)
+        notebook.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        # --- Aba de configurações gerais ---
+        general_frame = ttk.Frame(notebook, padding=20)
+        notebook.add(general_frame, text="Geral")
+        
+        ttk.Label(general_frame, text="Timeout padrão (ms):").grid(row=0, column=0, sticky="w", pady=5)
+        timeout_var = tk.StringVar(value=str(self.config.get("default_timeout", 5000)))
+        timeout_entry = ttk.Entry(general_frame, textvariable=timeout_var, width=10)
+        timeout_entry.grid(row=0, column=1, sticky="w", pady=5)
+        
+        conditional_var = tk.BooleanVar(value=self.config.get("use_conditional_waits", True))
+        ttk.Checkbutton(general_frame, text="Usar esperas condicionais", variable=conditional_var).grid(row=1, column=0, columnspan=2, sticky="w", pady=5)
+        
+        visibility_var = tk.BooleanVar(value=self.config.get("verify_visibility", True))
+        ttk.Checkbutton(general_frame, text="Verificar visibilidade dos elementos", variable=visibility_var).grid(row=2, column=0, columnspan=2, sticky="w", pady=5)
+        
+        network_var = tk.BooleanVar(value=self.config.get("capture_network", True))
+        ttk.Checkbutton(general_frame, text="Capturar tráfego de rede", variable=network_var).grid(row=3, column=0, columnspan=2, sticky="w", pady=5)
+        
+        ttk.Label(general_frame, text="Intervalo de captura de rede (ms):").grid(row=4, column=0, sticky="w", pady=5)
+        network_interval_var = tk.StringVar(value=str(self.config.get("network_capture_interval", 500)))
+        network_interval_entry = ttk.Entry(general_frame, textvariable=network_interval_var, width=10)
+        network_interval_entry.grid(row=4, column=1, sticky="w", pady=5)
+
+        ttk.Label(general_frame, text="Endpoint da API de Edição IA:").grid(row=5, column=0, sticky="w", pady=5)
+        ai_api_endpoint_var = tk.StringVar(value=self.config.get("ai_edit_api_endpoint", "https://api.openai.com/v1/chat/completions"))
+        ai_api_endpoint_entry = ttk.Entry(general_frame, textvariable=ai_api_endpoint_var, width=40)
+        ai_api_endpoint_entry.grid(row=5, column=1, sticky="ew", pady=5)
+
+        ttk.Label(general_frame, text="Modelo da API de Edição IA:").grid(row=6, column=0, sticky="w", pady=5)
+        ai_api_model_var = tk.StringVar(value=self.config.get("ai_edit_model", "gpt-3.5-turbo"))
+        ai_api_model_entry = ttk.Entry(general_frame, textvariable=ai_api_model_var, width=40)
+        ai_api_model_entry.grid(row=6, column=1, sticky="ew", pady=5)
+        
+        # --- Aba de configurações de seletores ---
+        selectors_frame = ttk.Frame(notebook, padding=20)
+        notebook.add(selectors_frame, text="Seletores")
+        
+        list_frame = ttk.LabelFrame(selectors_frame, text="Prioridade e Ativação de Seletores", padding=10)
+        list_frame.pack(fill="both", expand=True, pady=10)
+        
+        selector_list_canvas = tk.Canvas(list_frame)
+        selector_list_canvas.pack(side="left", fill="both", expand=True)
+        
+        scrollbar_selectors = ttk.Scrollbar(list_frame, orient="vertical", command=selector_list_canvas.yview)
+        scrollbar_selectors.pack(side="right", fill="y")
+        
+        selector_list_canvas.configure(yscrollcommand=scrollbar_selectors.set)
+        selector_list_canvas.bind("<Configure>", lambda e: selector_list_canvas.configure(scrollregion=selector_list_canvas.bbox("all")))
+        
+        selector_list_frame_inner = ttk.Frame(selector_list_canvas)
+        selector_list_canvas.create_window((0,0), window=selector_list_frame_inner, anchor="nw")
+        
+        ttk.Label(selector_list_frame_inner, text="Prioridade", width=10, anchor="center").grid(row=0, column=0, padx=5, pady=5, sticky="ew")
+        ttk.Label(selector_list_frame_inner, text="Tipo de Seletor", width=20, anchor="w").grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+        ttk.Label(selector_list_frame_inner, text="Ativo", width=5, anchor="center").grid(row=0, column=2, padx=5, pady=5, sticky="ew")
+        ttk.Label(selector_list_frame_inner, text="Ações", width=15, anchor="center").grid(row=0, column=3, padx=5, pady=5, sticky="ew")
+        ttk.Separator(selector_list_frame_inner, orient="horizontal").grid(row=1, column=0, columnspan=4, sticky="ew", pady=5)
+        
+        selector_vars = {}
+        selector_ui_elements = [] # Para guardar referências aos frames de cada seletor
+        
+        def refresh_selector_list_display():
+            for el in selector_ui_elements:
+                el["frame"].destroy()
+            selector_ui_elements.clear()
+            
+            current_priority = self.config.get("selector_priority", [])
+            current_enabled = self.config.get("selector_enabled", {})
+
+            for i, selector_name in enumerate(current_priority):
+                row_frame = ttk.Frame(selector_list_frame_inner)
+                row_frame.grid(row=i+2, column=0, columnspan=4, sticky="ew", pady=2)
+                selector_ui_elements.append({"frame": row_frame, "name": selector_name})
+                
+                ttk.Label(row_frame, text=f"{i+1}", width=10, anchor="center").grid(row=0, column=0, padx=5)
+                ttk.Label(row_frame, text=selector_name, width=20, anchor="w").grid(row=0, column=1, padx=5)
+                
+                var = tk.BooleanVar(value=current_enabled.get(selector_name, True))
+                selector_vars[selector_name] = var
+                ttk.Checkbutton(row_frame, variable=var, width=5).grid(row=0, column=2, padx=5)
+                
+                buttons_frame_move = ttk.Frame(row_frame)
+                buttons_frame_move.grid(row=0, column=3, padx=5)
+                
+                up_button = ttk.Button(buttons_frame_move, text="↑", width=3, style="Outline.TButton", command=lambda s=selector_name: move_selector_priority(s, "up"))
+                up_button.pack(side="left", padx=2)
+                if i == 0: up_button.config(state="disabled")
+                
+                down_button = ttk.Button(buttons_frame_move, text="↓", width=3, style="Outline.TButton", command=lambda s=selector_name: move_selector_priority(s, "down"))
+                down_button.pack(side="left", padx=2)
+                if i == len(current_priority) - 1: down_button.config(state="disabled")
+        
+        def move_selector_priority(selector_name, direction):
+            current_priority = self.config.get("selector_priority", [])
+            try:
+                idx = current_priority.index(selector_name)
+                if direction == "up" and idx > 0:
+                    current_priority[idx], current_priority[idx-1] = current_priority[idx-1], current_priority[idx]
+                elif direction == "down" and idx < len(current_priority) - 1:
+                    current_priority[idx], current_priority[idx+1] = current_priority[idx+1], current_priority[idx]
+                self.config["selector_priority"] = current_priority
+                refresh_selector_list_display()
+            except ValueError:
+                pass # Seletor não encontrado, não deveria acontecer
+
+        refresh_selector_list_display()
+        
+        add_selector_frame = ttk.Frame(selectors_frame, padding=(0,10,0,0))
+        add_selector_frame.pack(fill="x")
+        ttk.Label(add_selector_frame, text="Novo tipo de seletor:").pack(side="left", padx=5)
+        new_selector_name_entry = ttk.Entry(add_selector_frame, width=20)
+        new_selector_name_entry.pack(side="left", padx=5)
+        
+        def add_new_selector_type():
+            new_name = new_selector_name_entry.get().strip()
+            if new_name and new_name not in self.config["selector_priority"]:
+                self.config["selector_priority"].append(new_name)
+                self.config["selector_enabled"][new_name] = True
+                new_selector_name_entry.delete(0, tk.END)
+                refresh_selector_list_display()
+            elif not new_name:
+                Messagebox.show_warning("Aviso", "O nome do seletor não pode estar vazio.", parent=config_window)
+            else:
+                Messagebox.show_warning("Aviso", f"O seletor '{new_name}' já existe.", parent=config_window)
+                
+        ttk.Button(add_selector_frame, text="Adicionar Tipo", command=add_new_selector_type, style="success.Outline.TButton").pack(side="left", padx=5)
+        
+        # --- Botões Salvar/Cancelar --- 
+        buttons_frame_config_save = ttk.Frame(config_window)
+        buttons_frame_config_save.pack(fill="x", pady=10, padx=10, side="bottom") # Coloca na parte inferior
+        
+        def save_config_func():
+            try:
+                self.config["default_timeout"] = int(timeout_var.get())
+                self.config["use_conditional_waits"] = conditional_var.get()
+                self.config["verify_visibility"] = visibility_var.get()
+                self.config["capture_network"] = network_var.get()
+                self.config["network_capture_interval"] = int(network_interval_var.get())
+                self.config["ai_edit_api_endpoint"] = ai_api_endpoint_var.get().strip()
+                self.config["ai_edit_model"] = ai_api_model_var.get().strip()
+                
+                for selector_name, var_enabled in selector_vars.items():
+                    self.config["selector_enabled"][selector_name] = var_enabled.get()
+                
+                self.safe_log_message("Configurações salvas com sucesso.", "SUCCESS")
+                config_window.destroy()
+            except ValueError:
+                Messagebox.show_error("Erro de Validação", "Valores numéricos inválidos para timeouts ou intervalos.", parent=config_window)
+        
+        ttk.Button(buttons_frame_config_save, text="Salvar Configurações", style="success.TButton", command=save_config_func).pack(side="right", padx=5)
+        ttk.Button(buttons_frame_config_save, text="Cancelar", style="danger.Outline.TButton", command=config_window.destroy).pack(side="right", padx=5)
+
+    def load_api_keys(self):
+        self.api_keys = []
+        api_dir = "API_keys"
+        api_file_path = os.path.join(api_dir, "api.txt")
+        try:
+            if not os.path.exists(api_dir):
+                os.makedirs(api_dir)
+                self.safe_log_message(f"Diretório {api_dir} criado.", "INFO")
+            
+            if os.path.exists(api_file_path):
+                with open(api_file_path, "r", encoding="utf-8") as f:
+                    keys = [line.strip() for line in f if line.strip()] # Lê uma chave por linha
+                    if keys:
+                        self.api_keys = keys
+                        self.current_api_key_index = 0 # Começa com a primeira chave
+                        self.safe_log_message(f"{len(self.api_keys)} chave(s) API carregada(s) de {api_file_path}.", "SUCCESS")
+                    else:
+                        self.safe_log_message(f"Arquivo {api_file_path} encontrado, mas está vazio ou não contém chaves válidas.", "WARNING")
+            else:
+                self.safe_log_message(f"Arquivo {api_file_path} não encontrado. Crie-o com suas chaves API (uma por linha).", "WARNING")
+                # Cria um arquivo api.txt de exemplo se não existir
+                with open(api_file_path, "w", encoding="utf-8") as f:
+                    f.write("# Coloque suas chaves de API aqui, uma por linha\n")
+                self.safe_log_message(f"Arquivo de exemplo {api_file_path} criado.", "INFO")
+
+        except Exception as e:
+            self.safe_log_message(f"Erro ao carregar chaves API: {e}", "ERROR")
+            Messagebox.show_error("Erro de Chave API", f"Não foi possível carregar as chaves de API: {e}")
+
+    def get_current_api_key(self):
+        if not self.api_keys:
+            # Tenta carregar as chaves novamente se estiverem vazias
+            self.load_api_keys()
+            if not self.api_keys: # Se ainda estiverem vazias após tentar recarregar
+                self.safe_log_message("Nenhuma chave API disponível. Por favor, adicione chaves em API_keys/api.txt.", "ERROR")
+                # Messagebox.show_error("Erro de API", "Nenhuma chave API configurada. Verifique API_keys/api.txt")
+                return None 
+        
+        key = self.api_keys[self.current_api_key_index]
+        # Rotaciona para a próxima chave para a próxima chamada (round-robin simples)
+        self.current_api_key_index = (self.current_api_key_index + 1) % len(self.api_keys)
+        return key
+
+    def call_ai_api_for_edit(self, instruction, current_code, selected_lines_context=""):
+        """Chama a API da OpenAI (ou outra configurada) para edição de código."""
+        api_key = self.get_current_api_key()
+        if not api_key:
+            return {"success": False, "error": "Chave API não disponível."}
+
+        endpoint = self.config.get("ai_edit_api_endpoint", "https://api.openai.com/v1/chat/completions")
+        model = self.config.get("ai_edit_model", "gpt-3.5-turbo") # Modelo padrão para chat
+
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        # Prepara o prompt para o modelo de chat
+        system_message = "Você é um assistente de programação especializado em Cypress e JavaScript. Modifique o código fornecido estritamente de acordo com a instrução do usuário. Retorne APENAS o bloco de código modificado, sem explicações adicionais, comentários desnecessários ou markdown. Se a instrução não for clara ou não puder ser aplicada, retorne o código original sem modificações."
+        
+        user_prompt = f"Instrução: {instruction}\n"
+        if selected_lines_context:
+            user_prompt += f"\nContexto das linhas selecionadas:\n```javascript\n{selected_lines_context}```\n"
+        user_prompt += f"\nCódigo atual a ser modificado:\n```javascript\n{current_code}```"
+        
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_prompt}
+            ],
+            "temperature": 0.2, # Baixa temperatura para manter o código mais determinístico
+            "max_tokens": 2048 # Ajustar conforme necessário
+        }
+
+        try:
+            self.safe_log_message(f"Enviando solicitação para IA (modelo: {model})...", "INFO")
+            response = requests.post(endpoint, headers=headers, json=payload, timeout=60) # Timeout de 60 segundos
+            response.raise_for_status() # Lança exceção para erros HTTP (4xx ou 5xx)
+            
+            response_data = response.json()
+            
+            if response_data.get("choices") and response_data["choices"][0].get("message") and response_data["choices"][0]["message"].get("content"):
+                edited_code_raw = response_data["choices"][0]["message"]["content"].strip()
+                
+                # Tenta extrair apenas o bloco de código JavaScript
+                match = re.search(r"```javascript\n(.*?)\n```", edited_code_raw, re.DOTALL)
+                if match:
+                    edited_code = match.group(1).strip()
+                else:
+                    # Se não encontrar o bloco delimitado, assume que a resposta inteira é o código (com fallback)
+                    edited_code = edited_code_raw.replace("```javascript", "").replace("```", "").strip()
+                
+                self.safe_log_message("Resposta da IA recebida e processada.", "SUCCESS")
+                return {"success": True, "edited_code": edited_code, "full_response": edited_code_raw}
+            else:
+                error_msg = "Resposta da API de IA não contém o conteúdo esperado."
+                self.safe_log_message(f"{error_msg} Detalhes: {response_data}", "ERROR")
+                return {"success": False, "error": error_msg, "details": response_data}
+                
+        except requests.exceptions.Timeout:
+            self.safe_log_message("Timeout ao chamar a API de IA.", "ERROR")
+            return {"success": False, "error": "A API de IA demorou muito para responder."}
+        except requests.exceptions.RequestException as e:
+            error_detail = str(e)
+            if e.response is not None:
+                try:
+                    error_detail = e.response.json() # Tenta pegar detalhes do JSON de erro da API
+                except json.JSONDecodeError:
+                    error_detail = e.response.text # Se não for JSON, pega o texto bruto
+            self.safe_log_message(f"Erro ao chamar API de IA: {e}. Detalhes: {error_detail}", "ERROR")
+            return {"success": False, "error": f"Erro na comunicação com a API de IA: {e}", "details": error_detail}
+        except Exception as e:
+            self.safe_log_message(f"Erro inesperado ao processar resposta da IA: {e}", "ERROR")
+            return {"success": False, "error": f"Erro inesperado: {e}"}
+
+    def start_mapping(self):
+        url_with_protocol = self.protocol_var.get() + self.url_entry.get()
+        flow_name = self.flow_entry.get()
+        api_key = self.api_key_entry.get()
+
+        if not url_with_protocol or not flow_name:
+            Messagebox.show_error("Erro", "URL e Nome do Fluxo são obrigatórios.")
+            return
+
+        if not self.api_keys and not api_key: # Verifica se não há chaves carregadas E o campo está vazio
+             Messagebox.show_error("Erro", "Chave da API é obrigatória. Adicione em API_keys/api.txt ou no campo.")
+             return
+        
+        # Se uma chave foi digitada no campo e não há chaves carregadas, usa a do campo e tenta salvar
+        if api_key and api_key != "SUA_CHAVE_API_AQUI" and api_key not in self.api_keys:
+            if not self.api_keys: # Se a lista de chaves carregadas estiver vazia
+                self.api_keys.append(api_key)
+                self.current_api_key_index = 0
+                self.save_api_key(api_key) # Salva a nova chave no arquivo
+            # Se já existem chaves carregadas, a chave do campo é apenas para esta sessão, não salva automaticamente
+            # a menos que seja a única forma de ter uma chave.
+
+        self.actions_log = []
+        self.cypress_code = None
+        self.log_text.config(state="normal")
+        self.log_text.delete("1.0", tk.END)
+        self.log_text.config(state="disabled")
+        self.generate_button.config(state="disabled")
+        self.save_button.config(state="disabled")
+        self.start_button.grid_remove() # Oculta o botão Iniciar
+        self.stop_button.grid()      # Mostra o botão Parar
+        self.capturing = True
+        self.stop_capture_event.clear()
+
+        self.show_progress(message="Iniciando navegador...")
+        self.safe_log_message(f"Iniciando mapeamento para: {url_with_protocol}", "INFO")
+
+        # Inicia o navegador em uma nova thread para não bloquear a UI
+        threading.Thread(target=self._start_browser_and_capture, args=(url_with_protocol,), daemon=True).start()
+
+    def _start_browser_and_capture(self, url):
+        try:
+            # Tenta detectar o Chrome
+            try:
+                chrome_options = ChromeOptions()
+                # chrome_options.add_argument("--headless") # Opcional: rodar em modo headless
+                chrome_options.add_argument("--start-maximized")
+                chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+                chrome_options.add_experimental_option('useAutomationExtension', False)
+                
+                # Adiciona DevToolsActivePort para tentar capturar tráfego de rede (experimental)
+                # chrome_options.add_argument("--remote-debugging-port=9222") 
+                
+                # Tenta encontrar o ChromeDriver automaticamente (Selenium Manager)
+                self.driver = webdriver.Chrome(options=chrome_options)
+                self.safe_log_message("Navegador Chrome iniciado.", "SUCCESS")
+            except (SessionNotCreatedException, WebDriverException) as e_chrome:
+                self.safe_log_message(f"Falha ao iniciar Chrome: {e_chrome}. Tentando Edge...", "WARNING")
+                # Tenta detectar o Edge se o Chrome falhar
+                try:
+                    edge_options = EdgeOptions()
+                    # edge_options.add_argument("--headless")
+                    edge_options.add_argument("--start-maximized")
+                    edge_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+                    edge_options.add_experimental_option('useAutomationExtension', False)
+                    
+                    # edge_options.add_argument("--remote-debugging-port=9223")
+
+                    self.driver = webdriver.Edge(options=edge_options)
+                    self.safe_log_message("Navegador Edge iniciado.", "SUCCESS")
+                except (SessionNotCreatedException, WebDriverException) as e_edge:
+                    self.safe_log_message(f"Falha ao iniciar Edge: {e_edge}. Verifique os drivers.", "ERROR")
+                    self.show_progress(show=False)
+                    self.safe_update_ui(lambda: self.stop_button.grid_remove())
+                    self.safe_update_ui(lambda: self.start_button.grid()) # Mostra o botão Iniciar novamente
+                    self.capturing = False
+                    Messagebox.show_error("Erro de Navegador", "Não foi possível iniciar o Chrome ou Edge. Verifique se os navegadores e seus respectivos drivers (ChromeDriver/MSWebDriver) estão instalados e no PATH do sistema.")
+                    return
+
+            self.driver.get(url)
+            self.show_progress(show=False) # Esconde a barra de progresso após o navegador abrir
+            self.safe_log_message("Navegador aberto. Aguardando ações do usuário...", "INFO")
+            self.safe_log_message("Pressione 'ESC' na janela do navegador para parar o mapeamento.", "INFO")
+
+            # Inicia a captura de eventos do teclado em uma thread separada
+            # keyboard.on_press_key("esc", self.stop_mapping_on_esc, suppress=True)
+            # Substituído pelo botão "Parar Mapeamento"
+
+            # Loop de captura de ações (simplificado, precisa de implementação robusta)
+            # Esta parte é complexa e requer listeners de eventos no navegador
+            # ou polling do DOM, que pode ser pesado.
+            # A abordagem com Selenium puro para gravar ações do usuário é limitada.
+            # Idealmente, usaríamos uma extensão de navegador ou proxy.
+            
+            # Exemplo de como capturar cliques e inputs (muito básico):
+            last_url = self.driver.current_url
+            while self.capturing and not self.stop_capture_event.is_set():
+                try:
+                    # Verifica se a janela do navegador ainda está aberta
+                    if not self.driver.window_handles:
+                        self.safe_log_message("Janela do navegador foi fechada. Parando mapeamento.", "WARNING")
+                        self.stop_mapping() # Chama o método de parada
+                        break
+
+                    current_url = self.driver.current_url
+                    if current_url != last_url:
+                        self.actions_log.append({"action": "navigate", "url": current_url, "timestamp": time.time()})
+                        self.safe_log_message(f"Navegou para: {current_url}", "INFO")
+                        last_url = current_url
+                    
+                    # Lógica de captura de eventos (ex: JavaScript injetado para escutar cliques)
+                    # Esta é a parte mais desafiadora e que pode causar lentidão se não otimizada.
+                    # Por agora, vamos focar no botão de parada e na geração manual.
+                    
+                    # Captura de tráfego de rede (se habilitado)
+                    if self.config.get("capture_network", False):
+                        self._capture_network_traffic() # Implementar esta função
+
+                except WebDriverException as e:
+                    if "target window is closed" in str(e).lower() or \
+                       "no such window" in str(e).lower() or \
+                       "session deleted because of page crash" in str(e).lower() or \
+                       "unable to connect to renderer" in str(e).lower():
+                        self.safe_log_message(f"Navegador fechado ou crashou: {e}. Parando mapeamento.", "ERROR")
+                        self.stop_mapping() # Chama o método de parada
+                        break
+                    else:
+                        self.safe_log_message(f"Erro durante o mapeamento: {e}", "ERROR")
+                        # Considerar parar o mapeamento dependendo do erro
+                except Exception as e_loop:
+                    self.safe_log_message(f"Erro inesperado no loop de captura: {e_loop}", "ERROR")
+                
+                time.sleep(0.2) # Pequena pausa para não sobrecarregar a CPU
+
+        except TimeoutException:
+            self.safe_log_message("Timeout ao carregar a URL inicial.", "ERROR")
+            self.show_progress(show=False)
+            Messagebox.show_error("Erro de Timeout", "A página demorou muito para carregar.")
+        except Exception as e:
+            self.safe_log_message(f"Erro ao iniciar o navegador: {e}", "ERROR")
+            self.show_progress(show=False)
+            Messagebox.show_error("Erro Crítico", f"Ocorreu um erro inesperado: {e}")
+        finally:
+            # Garante que o estado de captura seja resetado
+            if self.capturing: # Se ainda estiver capturando, significa que não foi parado pelo stop_mapping
+                self.safe_update_ui(lambda: self.stop_button.grid_remove())
+                self.safe_update_ui(lambda: self.start_button.grid())
+                self.capturing = False
+            if self.driver:
+                try:
+                    self.driver.quit()
+                    self.safe_log_message("Navegador fechado.", "INFO")
+                except Exception as eq:
+                    self.safe_log_message(f"Erro ao fechar navegador: {eq}", "WARNING")
+                self.driver = None
+
+    def _capture_network_traffic(self):
+        """Captura tráfego de rede usando Selenium (limitado, idealmente via proxy/DevTools)"""
+        # Esta é uma implementação MUITO SIMPLIFICADA e pode não funcionar bem ou ser pesada.
+        # A API DevTools do Chrome/Edge é mais robusta para isso.
+        try:
+            if self.driver and hasattr(self.driver, "get_log"):
+                for entry in self.driver.get_log('performance'): # 'performance' log pode conter eventos de rede
+                    log = json.loads(entry['message'])['message']
+                    if 'Network.requestWillBeSent' in log['method']:
+                        request_id = log['params']['requestId']
+                        pending_requests[request_id] = log['params']['request']
+                        # self.safe_log_message(f"Network Request Out: {log['params']['request']['method']} {log['params']['request']['url'][:80]}...", "INFO")
+                    elif 'Network.responseReceived' in log['method']:
+                        request_id = log['params']['requestId']
+                        if request_id in pending_requests:
+                            request_info = pending_requests.pop(request_id)
+                            response_info = log['params']['response']
+                            network_requests.append({
+                                "request": request_info,
+                                "response": response_info,
+                                "timestamp": time.time()
+                            })
+                            # self.safe_log_message(f"Network Response In: {response_info['status']} {request_info['url'][:80]}...", "INFO")
+        except Exception as e:
+            # self.safe_log_message(f"Erro ao capturar tráfego de rede: {e}", "WARNING")
+            pass # Evita spammar o log com erros de captura de rede
+
+    def stop_mapping_on_esc(self, event=None):
+        """Chamado quando a tecla ESC é pressionada para parar o mapeamento."""
+        # Esta função não é mais diretamente ligada ao evento de teclado globalmente
+        # mas pode ser chamada pelo botão "Parar Mapeamento".
+        if self.capturing:
+            self.safe_log_message("Parada de mapeamento solicitada...", "INFO")
+            self.stop_capture_event.set() # Sinaliza para a thread de captura parar
+            self.capturing = False # Define a flag de captura como False imediatamente
+            
+            self.safe_update_ui(lambda: self.stop_button.grid_remove()) # Oculta Parar
+            self.safe_update_ui(lambda: self.start_button.grid())    # Mostra Iniciar
+            self.show_progress(show=False)
+
+            if self.driver:
+                try:
+                    # Tenta obter o HTML da página atual para a última ação (se houver)
+                    # page_source = self.driver.page_source
+                    # self.actions_log.append({"action": "page_html", "source": page_source, "timestamp": time.time()})
+                    # self.safe_log_message("HTML da página final capturado.", "INFO")
+                    pass # A captura de HTML pode ser pesada, considerar se é realmente necessária aqui
+                except Exception as e_html:
+                    self.safe_log_message(f"Erro ao obter HTML da página final: {e_html}", "WARNING")
+                
+                # Não fecha o driver aqui, a thread _start_browser_and_capture cuidará disso no finally
+
+            if self.actions_log:
+                self.safe_log_message("Mapeamento concluído. Gerando código Cypress...", "INFO")
+                self.generate_test() # Gera o teste automaticamente ao parar
+            else:
+                self.safe_log_message("Mapeamento parado. Nenhuma ação registrada.", "WARNING")
+            
+            # keyboard.unhook_all() # Remove todos os hooks de teclado
+        else:
+            self.safe_log_message("Nenhum mapeamento ativo para parar.", "INFO")
+
+    def stop_mapping(self):
+        """Função para o botão Parar Mapeamento"""
+        self.stop_mapping_on_esc() # Reutiliza a lógica existente
+
+    def generate_test(self):
+        if not self.actions_log:
+            # Esta verificação pode ser redundante se generate_test só é chamado após ações
+            self.safe_log_message("Nenhuma ação registrada para gerar o teste.", "WARNING")
+            # Messagebox.show_warning("Aviso", "Nenhuma ação registrada para gerar o teste.")
+            # return # Comentado para permitir a abertura da janela de edição mesmo sem ações
+
+        flow_name = self.flow_entry.get() or "MeuFluxoDeTeste"
+        
+        # Lógica de geração de código Cypress (simplificada)
+        # Aqui você transformaria self.actions_log em código Cypress
+        # Esta é uma parte crucial que precisa de uma lógica robusta de tradução de ações para código.
+        
+        code_lines = [
+            f"describe('{flow_name}', () => {{",
+            "  beforeEach(() => {",
+            f"    cy.visit('{self.actions_log[0]['url'] if self.actions_log and 'url' in self.actions_log[0] else self.url_entry.get()}');",
+            "    // Considere adicionar esperas inteligentes aqui, se necessário",
+            "  });",
+            "",
+            f"  it('should execute the {flow_name} flow', () => {{"
+        ]
+        
+        # Adiciona timeouts configuráveis e outras configurações
+        default_timeout = self.config.get("default_timeout", 5000)
+        use_conditional = self.config.get("use_conditional_waits", True)
+        
+        # Adiciona um timeout global para comandos Cypress se não for usar esperas condicionais
+        if not use_conditional:
+            code_lines.insert(1, f"  Cypress.config('defaultCommandTimeout', {default_timeout});")
+
+        # Processa as ações registradas
+        for log_entry in self.actions_log:
+            action = log_entry.get("action")
+            target = log_entry.get("target") # Ex: seletor CSS
+            value = log_entry.get("value")   # Ex: texto digitado
+            url = log_entry.get("url")
+            
+            # Lógica para gerar o comando Cypress correspondente
+            # Esta é uma simplificação. Você precisará de uma lógica mais sofisticada
+            # para escolher seletores, lidar com diferentes tipos de elementos, etc.
+            if action == "click":
+                # Exemplo de como usar a prioridade de seletores (precisa ser implementado em get_best_selector)
+                # best_selector = self.get_best_selector(log_entry.get("element_info")) 
+                # code_lines.append(f"    cy.get('{best_selector}').click({{ force: true }});") # force:true pode ser perigoso
+                code_lines.append(f"    cy.get('{target or 'body'}').click();") # Placeholder
+            elif action == "type":
+                code_lines.append(f"    cy.get('{target}').type('{value}');")
+            elif action == "navigate":
+                # A navegação inicial já está no beforeEach, esta seria para navegações subsequentes
+                # code_lines.append(f"    cy.visit('{url}');") # Pode ser redundante se o clique já navega
+                pass
+            elif action == "wait": # Exemplo de espera fixa (geralmente não recomendado)
+                code_lines.append(f"    cy.wait({log_entry.get('duration', 500)});")
+            
+            # Adiciona espera condicional ou timeout após a ação, se configurado
+            if use_conditional and action in ["click", "type"]:
+                # Exemplo: esperar por um elemento específico aparecer ou uma URL mudar
+                # code_lines.append(f"    cy.url().should('include', '/nova-pagina', {{ timeout: {default_timeout} }});")
+                pass # Implementar esperas condicionais reais
+            elif not use_conditional and action in ["click", "type"]:
+                 # Se não usar esperas condicionais, um cy.wait() fixo pode ser inserido (não ideal)
+                 # code_lines.append(f"    cy.wait(250); // Pequena espera após ação")
+                 pass 
+
+        code_lines.append("    // Adicione verificações (assertions) aqui para validar o fluxo")
+        code_lines.append("    // Ex: cy.get('.mensagem-sucesso').should('be.visible');")
+        code_lines.append("  });")
+        code_lines.append("});")
+        
+        self.cypress_code = "\n".join(code_lines)
+        self.safe_log_message("Código Cypress gerado.", "SUCCESS")
+        # self.save_button.config(state="normal") # Habilita salvar após gerar
+        # self.generate_button.config(state="disabled") # Desabilita gerar novamente até novo mapeamento
+
+        # Abre a janela de personalização do código
+        self.show_code_customization_window()
+        
+    def get_best_selector(self, element_info):
+        """Seleciona o melhor seletor com base na prioridade configurada."""
+        if not element_info: return "body" # Fallback
+        
+        for selector_type in self.config.get("selector_priority", []):
+            if self.config["selector_enabled"].get(selector_type, False):
+                if selector_type == "data-cy" and element_info.get("data-cy"):
+                    return f"[data-cy='{element_info['data-cy']}']"
+                if selector_type == "data-testid" and element_info.get("data-testid"):
+                    return f"[data-testid='{element_info['data-testid']}']"
+                if selector_type == "id" and element_info.get("id"):
+                    return f"#{element_info['id']}"
+                if selector_type == "name" and element_info.get("name"):
+                    return f"[name='{element_info['name']}']"
+                # Adicionar mais tipos de seletores aqui (role, aria-label, class, tag, type)
+                # Para 'class', pode ser necessário processar e escolher a classe mais específica.
+                # Para 'tag' e 'type', pode ser menos robusto.
+
+        return element_info.get("xpath", "body") # Fallback para XPath ou body
+
+    def show_code_customization_window(self):
+        """Exibe uma janela para o usuário visualizar, editar e salvar o código Cypress."""
+        if not self.cypress_code:
+            self.generate_test() # Gera o código se ainda não existir
+            if not self.cypress_code: # Se ainda não existir após tentar gerar
+                 Messagebox.show_error("Erro", "Não foi possível gerar o código para personalização.")
+                 return
+
+        custom_window = tk.Toplevel(self.root)
+        custom_window.title("Personalizar Código Cypress")
+        custom_window.geometry("1000x700") # Tamanho aumentado
+        custom_window.resizable(True, True)
+
+        # --- Layout principal da janela de personalização com PanedWindow ---
+        main_paned_window = ttk.PanedWindow(custom_window, orient=tk.HORIZONTAL)
+        main_paned_window.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # --- Frame do Editor de Código (à esquerda) ---
+        editor_frame = ttk.Frame(main_paned_window, padding=5)
+        main_paned_window.add(editor_frame, weight=2) # Dá mais peso ao editor
+
+        editor_toolbar = ttk.Frame(editor_frame)
+        editor_toolbar.pack(fill=tk.X, pady=(0,5))
+
+        # Botões de Desfazer e Refazer
+        undo_button = ttk.Button(editor_toolbar, text="Desfazer", command=lambda: self.undo_edit(code_text_widget), style="Outline.TButton")
+        undo_button.pack(side=tk.LEFT, padx=2)
+        redo_button = ttk.Button(editor_toolbar, text="Refazer", command=lambda: self.redo_edit(code_text_widget), style="Outline.TButton")
+        redo_button.pack(side=tk.LEFT, padx=2)
+        
+        # Frame para o editor de código com números de linha
+        code_area_frame = ttk.Frame(editor_frame)
+        code_area_frame.pack(fill=tk.BOTH, expand=True)
+
+        self.line_numbers_text = tk.Text(code_area_frame, width=4, padx=3, takefocus=0, bd=0,
+                                       background="#2a2a2a", foreground="#d0d0d0",
+                                       state="disabled", wrap="none", font=("Consolas", 10))
+        self.line_numbers_text.pack(side=tk.LEFT, fill=tk.Y)
+
+        code_text_widget = tk.Text(code_area_frame, wrap="word", undo=False, font=("Consolas", 10), 
+                                   background="#333333", foreground="#F0F0F0", insertbackground="#FFFFFF") # Cores para tema escuro
+        code_text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        # Scrollbar para o editor de código (controla ambos, números de linha e texto)
+        code_scrollbar_y = ttk.Scrollbar(code_area_frame, orient=tk.VERTICAL, command=lambda *args: self.on_code_scroll(*args, code_text_widget, self.line_numbers_text))
+        code_scrollbar_y.pack(side=tk.RIGHT, fill=tk.Y)
+        code_text_widget.config(yscrollcommand=code_scrollbar_y.set)
+        self.line_numbers_text.config(yscrollcommand=code_scrollbar_y.set) # Sincroniza scrollbar
+
+        code_text_widget.insert("1.0", self.cypress_code)
+        self.update_code_history(self.cypress_code) # Inicializa o histórico
+        
+        # Adiciona evento para atualizar números de linha e marcadores
+        code_text_widget.bind("<KeyRelease>", lambda event: self.on_code_change(event, code_text_widget, self.line_numbers_text))
+        code_text_widget.bind("<MouseWheel>", lambda event: self.on_code_scroll(event, code_text_widget, self.line_numbers_text)) # Para scroll do mouse
+        code_text_widget.bind("<Button-4>", lambda event: self.on_code_scroll(event, code_text_widget, self.line_numbers_text)) # Scroll up (Linux)
+        code_text_widget.bind("<Button-5>", lambda event: self.on_code_scroll(event, code_text_widget, self.line_numbers_text)) # Scroll down (Linux)
+
+        self.update_line_numbers(code_text_widget, self.line_numbers_text) # Atualiza inicialmente
+
+        # --- Frame do Chat IA (à direita) ---
+        ai_chat_frame = ttk.LabelFrame(main_paned_window, text="Edição Assistida por IA", padding=10)
+        main_paned_window.add(ai_chat_frame, weight=1)
+
+        chat_log_frame = ttk.Frame(ai_chat_frame)
+        chat_log_frame.pack(fill=tk.BOTH, expand=True, pady=(0,5))
+        self.ai_chat_log = tk.Text(chat_log_frame, wrap="word", state="disabled", height=10, font=("Segoe UI", 9), 
+                                   background="#2b2b2b", foreground="#cccccc")
+        ai_chat_scrollbar = ttk.Scrollbar(chat_log_frame, orient=tk.VERTICAL, command=self.ai_chat_log.yview)
+        self.ai_chat_log.config(yscrollcommand=ai_chat_scrollbar.set)
+        self.ai_chat_log.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        ai_chat_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        # Tags para o chat IA
+        self.ai_chat_log.tag_configure("user", foreground="#87CEEB") # Azul claro para usuário
+        self.ai_chat_log.tag_configure("ia", foreground="#90EE90")   # Verde claro para IA
+        self.ai_chat_log.tag_configure("system", foreground="#D3D3D3", font=("Segoe UI", 9, "italic")) # Cinza para sistema
+        self.ai_chat_log.tag_configure("error_ia", foreground="#FF7F7F", font=("Segoe UI", 9, "bold")) # Vermelho para erro IA
+
+        self.add_chat_message("Bem-vindo! Descreva a alteração que deseja fazer no código.", "system")
+
+        ai_input_frame = ttk.Frame(ai_chat_frame)
+        ai_input_frame.pack(fill=tk.X, pady=(5,0))
+        self.ai_instruction_entry = ttk.Entry(ai_input_frame, width=40, font=("Segoe UI", 9))
+        self.ai_instruction_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0,5))
+        self.ai_instruction_entry.bind("<Return>", lambda event: self.send_ai_instruction(code_text_widget))
+        ai_send_button = ttk.Button(ai_input_frame, text="Enviar", command=lambda: self.send_ai_instruction(code_text_widget), style="success.Outline.TButton")
+        ai_send_button.pack(side=tk.LEFT)
+        
+        # Frame para botões de aplicar/rejeitar sugestão da IA (inicialmente oculto)
+        self.ai_suggestion_frame = ttk.Frame(ai_chat_frame)
+        self.ai_suggestion_frame.pack(fill=tk.X, pady=5)
+        self.ai_apply_button = ttk.Button(self.ai_suggestion_frame, text="Aplicar Sugestão da IA", 
+                                          command=lambda: self.apply_ai_suggestion(code_text_widget), style="success.TButton")
+        self.ai_apply_button.pack(side=tk.LEFT, padx=5)
+        self.ai_reject_button = ttk.Button(self.ai_suggestion_frame, text="Rejeitar", 
+                                           command=self.reject_ai_suggestion, style="danger.Outline.TButton")
+        self.ai_reject_button.pack(side=tk.LEFT)
+        self.ai_suggestion_frame.pack_forget() # Oculta inicialmente
+        self.current_ai_suggestion = None # Para armazenar a sugestão da IA
+
+        # --- Botões de Ação na Janela de Personalização ---
+        action_buttons_frame = ttk.Frame(custom_window, padding=(0,10,0,0))
+        action_buttons_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=10, pady=10)
+
+        run_button = ttk.Button(action_buttons_frame, text="▶ Executar Teste", 
+                                command=lambda: self.run_cypress_test(self.current_saved_filepath or "temp_test.cy.js", code_text_widget, custom_window),
+                                style="primary.TButton")
+        run_button.pack(side=tk.LEFT, padx=5)
+
+        save_code_button = ttk.Button(action_buttons_frame, text="Salvar Alterações e Fechar", 
+                                      command=lambda: self.save_customized_code_and_close(code_text_widget, custom_window),
+                                      style="success.TButton")
+        save_code_button.pack(side=tk.RIGHT, padx=5)
+        
+        copy_button = ttk.Button(action_buttons_frame, text="Copiar Código", 
+                                 command=lambda: self.copy_code(code_text_widget), style="info.Outline.TButton")
+        copy_button.pack(side=tk.RIGHT, padx=5)
+
+        # Adicionar outras ferramentas de edição aqui (Ex: Adicionar Preset API, Ajustar Timeout, Substituir Seletor)
+        # Estas podem ser movidas para um menu ou uma toolbar dentro do editor_frame se ficarem muitas.
+        # preset_api_button = ttk.Button(editor_toolbar, text="Preset API", command=lambda: self.add_api_preset(code_text_widget), style="Outline.TButton")
+        # preset_api_button.pack(side=tk.LEFT, padx=2)
+        # timeout_button = ttk.Button(editor_toolbar, text="Ajustar Timeout", command=lambda: self.adjust_timeout_dialog(code_text_widget), style="Outline.TButton")
+        # timeout_button.pack(side=tk.LEFT, padx=2)
+        # replace_button = ttk.Button(editor_toolbar, text="Substituir Seletor", command=lambda: self.replace_selector_dialog(code_text_widget), style="Outline.TButton")
+        # replace_button.pack(side=tk.LEFT, padx=2)
+
+        # Foco inicial no campo de instrução da IA
+        self.ai_instruction_entry.focus_set()
+        custom_window.transient(self.root) # Mantém a janela no topo da principal
+        custom_window.grab_set() # Bloqueia interação com a janela principal
+        self.root.wait_window(custom_window) # Espera a janela ser fechada
+
+    def on_code_change(self, event, code_widget, line_numbers_widget):
+        self.update_line_numbers(code_widget, line_numbers_widget)
+        # Marcar que o código foi modificado para o histórico de undo/redo
+        # A lógica de `update_code_history` deve ser chamada quando uma edição significativa é feita.
+        # Aqui, apenas atualizamos os números de linha.
+
+    def on_code_scroll(self, event_or_args, code_widget, line_numbers_widget):
+        """Sincroniza o scroll do widget de números de linha com o widget de código."""
+        if isinstance(event_or_args, tk.Event): # Evento do mouse wheel
+            if event_or_args.delta < 0: # Rolar para baixo
+                code_widget.yview_scroll(1, "units")
+                line_numbers_widget.yview_scroll(1, "units")
+            elif event_or_args.delta > 0: # Rolar para cima
+                code_widget.yview_scroll(-1, "units")
+                line_numbers_widget.yview_scroll(-1, "units")
+        else: # Argumentos do scrollbar
+            # O primeiro argumento é 'moveto' ou 'scroll'
+            # O segundo é a fração (para moveto) ou número de unidades (para scroll)
+            action, value = event_or_args[0], event_or_args[1]
+            if action == "moveto":
+                code_widget.yview_moveto(value)
+                line_numbers_widget.yview_moveto(value)
+            elif action == "scroll":
+                code_widget.yview_scroll(int(value), event_or_args[2]) # event_or_args[2] é "units" ou "pages"
+                line_numbers_widget.yview_scroll(int(value), event_or_args[2])
+        self.update_line_numbers(code_widget, line_numbers_widget) # Garante que os números de linha estejam corretos após o scroll
+        return "break" # Impede o processamento padrão do evento de scroll para evitar duplicação
+
+    def update_line_numbers(self, code_widget, line_numbers_widget):
+        line_numbers_widget.config(state="normal")
+        line_numbers_widget.delete("1.0", tk.END)
+        # Obtém o número de linhas visíveis e a primeira linha visível
+        num_lines = code_widget.index(f"@0,{code_widget.winfo_height()}").split('.')[0] # Número de linhas que cabem na altura visível
+        first_visible_line = code_widget.index("@0,0").split('.')[0]
+        
+        # Obtém o número total de linhas no widget de código
+        total_lines_in_code = int(code_widget.index("end-1c").split('.')[0])
+
+        # Gera os números de linha
+        line_numbers_string = ""
+        for i in range(1, total_lines_in_code + 1):
+            line_numbers_string += str(i) + "\n"
+        
+        line_numbers_widget.insert("1.0", line_numbers_string)
+        line_numbers_widget.config(state="disabled")
+        
+        # Sincroniza a visão vertical
+        # Esta é a parte crucial para manter os números de linha alinhados com o texto
+        # Precisamos garantir que a primeira linha visível no `code_widget` corresponda
+        # à primeira linha visível no `line_numbers_widget`.
+        # A maneira mais simples é forçar o yview do line_numbers_widget para o mesmo que o code_widget.
+        # No entanto, o scroll já está sendo sincronizado pelo `on_code_scroll`.
+        # Apenas garantir que o conteúdo é atualizado é suficiente aqui.
+        # A sincronização de scroll é mais complexa do que parece devido a alturas de linha variáveis e fontes.
+        # Para fontes monoespaçadas e alturas de linha fixas, a sincronização direta do yview_scroll funciona.
+        current_scroll_pos = code_widget.yview()
+        line_numbers_widget.yview_moveto(current_scroll_pos[0])
+
+    def get_selected_lines_context(self, code_widget):
+        """Obtém o texto das linhas que têm marcadores (checkboxes) selecionados."""
+        # Esta função precisaria de uma lógica para checkboxes ao lado dos números de linha.
+        # Por simplicidade, vamos assumir que se houver seleção de texto, esse é o contexto.
+        try:
+            selected_text = code_widget.get(tk.SEL_FIRST, tk.SEL_LAST)
+            return selected_text.strip()
+        except tk.TclError:
+            return "" # Nenhuma seleção
+
+    def add_chat_message(self, message, sender_type):
+        self.ai_chat_log.config(state="normal")
+        self.ai_chat_log.insert(tk.END, f"{message}\n\n", sender_type)
+        self.ai_chat_log.config(state="disabled")
+        self.ai_chat_log.see(tk.END)
+
+    def send_ai_instruction(self, code_widget):
+        instruction = self.ai_instruction_entry.get().strip()
+        if not instruction:
+            return
+
+        self.add_chat_message(f"Usuário: {instruction}", "user")
+        self.ai_instruction_entry.delete(0, tk.END)
+        self.show_progress(message="IA processando sua solicitação...", start_animation=True)
+        self.ai_suggestion_frame.pack_forget() # Oculta botões de sugestão anteriores
+        self.current_ai_suggestion = None
+
+        current_code = code_widget.get("1.0", tk.END).strip()
+        selected_context = self.get_selected_lines_context(code_widget)
+
+        # Chama a API em uma thread para não bloquear a UI
+        threading.Thread(target=self._process_ai_request, args=(instruction, current_code, selected_context, code_widget), daemon=True).start()
+
+    def _process_ai_request(self, instruction, current_code, selected_context, code_widget):
+        ai_response = self.call_ai_api_for_edit(instruction, current_code, selected_context)
+        self.show_progress(show=False)
+
+        if ai_response.get("success"):
+            self.current_ai_suggestion = ai_response.get("edited_code")
+            full_response_display = ai_response.get("full_response", self.current_ai_suggestion) # Mostra a resposta completa se disponível
+            
+            self.add_chat_message(f"IA: Recebi sua solicitação. Aqui está uma sugestão de alteração:\n---\n{full_response_display}\n---", "ia")
+            # Mostra os botões para aplicar ou rejeitar
+            self.safe_update_ui(lambda: self.ai_suggestion_frame.pack(fill=tk.X, pady=5))
+        else:
+            error_message = ai_response.get("error", "Erro desconhecido da IA.")
+            details = ai_response.get("details")
+            display_error = f"IA: Desculpe, não consegui processar sua solicitação. Erro: {error_message}"
+            if details:
+                display_error += f"\nDetalhes: {str(details)[:200]}..." # Limita o tamanho dos detalhes
+            self.add_chat_message(display_error, "error_ia")
+
+    def apply_ai_suggestion(self, code_widget):
+        if self.current_ai_suggestion is not None:
+            code_widget.config(state="normal")
+            code_widget.delete("1.0", tk.END)
+            code_widget.insert("1.0", self.current_ai_suggestion)
+            code_widget.config(state="disabled")
+            self.update_code_history(self.current_ai_suggestion) # Adiciona ao histórico de undo/redo
+            self.update_line_numbers(code_widget, self.line_numbers_text) # Atualiza números de linha
+            self.add_chat_message("Sugestão da IA aplicada ao código.", "system")
+        self.ai_suggestion_frame.pack_forget()
+        self.current_ai_suggestion = None
+
+    def reject_ai_suggestion(self):
+        self.add_chat_message("Sugestão da IA rejeitada.", "system")
+        self.ai_suggestion_frame.pack_forget()
+        self.current_ai_suggestion = None
+
+    def update_code_history(self, code_content):
+        # Se o índice não é o último, descarta o histórico futuro (redo)
+        if self.history_index < len(self.code_history) - 1:
+            self.code_history = self.code_history[:self.history_index + 1]
+        
+        # Evita adicionar estados duplicados consecutivos
+        if not self.code_history or self.code_history[-1] != code_content:
+            self.code_history.append(code_content)
+            self.history_index = len(self.code_history) - 1
+        
+        # Limita o tamanho do histórico (opcional)
+        # max_history_size = 50 
+        # if len(self.code_history) > max_history_size:
+        #     self.code_history.pop(0)
+        #     self.history_index -=1
+
+    def undo_edit(self, code_widget):
+        if self.history_index > 0:
+            self.history_index -= 1
+            current_code_state = self.code_history[self.history_index]
+            code_widget.config(state="normal")
+            code_widget.delete("1.0", tk.END)
+            code_widget.insert("1.0", current_code_state)
+            code_widget.config(state="disabled")
+            self.update_line_numbers(code_widget, self.line_numbers_text)
+            self.add_chat_message("Ação Desfeita.", "system")
+
+    def redo_edit(self, code_widget):
+        if self.history_index < len(self.code_history) - 1:
+            self.history_index += 1
+            current_code_state = self.code_history[self.history_index]
+            code_widget.config(state="normal")
+            code_widget.delete("1.0", tk.END)
+            code_widget.insert("1.0", current_code_state)
+            code_widget.config(state="disabled")
+            self.update_line_numbers(code_widget, self.line_numbers_text)
+            self.add_chat_message("Ação Refeita.", "system")
+
+    def save_api_key(self, api_key_to_save):
+        """Adiciona uma nova chave API ao arquivo API_keys/api.txt."""
+        api_dir = "API_keys"
+        api_file_path = os.path.join(api_dir, "api.txt")
+        try:
+            if not os.path.exists(api_dir):
+                os.makedirs(api_dir)
+            
+            # Lê chaves existentes para evitar duplicatas (opcional, mas bom)
+            existing_keys = set()
+            if os.path.exists(api_file_path):
+                with open(api_file_path, "r", encoding="utf-8") as f_read:
+                    for line in f_read:
+                        existing_keys.add(line.strip())
+            
+            if api_key_to_save not in existing_keys:
+                with open(api_file_path, "a", encoding="utf-8") as f_append:
+                    f_append.write(f"{api_key_to_save}\n")
+                self.safe_log_message(f"Nova chave API salva em {api_file_path}.", "SUCCESS")
+                if api_key_to_save not in self.api_keys: # Adiciona à lista em memória também
+                    self.api_keys.append(api_key_to_save)
+            else:
+                self.safe_log_message(f"Chave API já existe em {api_file_path}.", "INFO")
+
+        except Exception as e:
+            self.safe_log_message(f"Erro ao salvar nova chave API: {e}", "ERROR")
+
+    def save_test(self):
+        if not self.cypress_code:
+            Messagebox.show_error("Erro", "Nenhum código Cypress para salvar.")
+            return
+
+        filepath = tk.filedialog.asksaveasfilename(
+            defaultextension=".cy.js",
+            filetypes=[("Cypress Test Files", "*.cy.js"), ("JavaScript Files", "*.js"), ("All Files", "*.*")],
+            title="Salvar Teste Cypress Como"
+        )
+        if not filepath:
+            return # Usuário cancelou
+        
+        try:
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(self.cypress_code)
+            self.safe_log_message(f"Teste salvo em: {filepath}", "SUCCESS")
+            Messagebox.show_info("Sucesso", f"Teste salvo em: {filepath}")
+            self.current_saved_filepath = filepath # Guarda o caminho do último arquivo salvo
+        except Exception as e:
+            self.safe_log_message(f"Erro ao salvar o teste: {e}", "ERROR")
+            Messagebox.show_error("Erro de Salvamento", f"Não foi possível salvar o arquivo: {e}")
+            
+    def save_customized_code_and_close(self, code_widget, window_to_destroy):
+        self.cypress_code = code_widget.get("1.0", tk.END).strip() # Atualiza o código principal com as edições
+        self.safe_log_message("Código personalizado atualizado.", "INFO")
+        # A ação de salvar em arquivo agora é separada (botão "Salvar Teste" na tela principal)
+        # Ou pode ser adicionado um botão "Salvar Como..." aqui também.
+        # Por ora, apenas atualiza o self.cypress_code e fecha.
+        self.save_button.config(state="normal") # Habilita o botão de salvar na tela principal
+        window_to_destroy.destroy()
+
+    def copy_code(self, code_text_widget):
+        try:
+            pyperclip.copy(code_text_widget.get("1.0", tk.END))
+            self.add_chat_message("Código copiado para a área de transferência!", "system") # Feedback no chat IA
+            # Messagebox.show_info("Sucesso", "Código copiado para a área de transferência!") # Ou um messagebox
+        except pyperclip.PyperclipException as e:
+            self.safe_log_message(f"Erro ao copiar código: {e}. Certifique-se de que 'xclip' ou 'xsel' (Linux) ou 'pbcopy' (macOS) está instalado.", "ERROR")
+            Messagebox.show_error("Erro de Cópia", f"Não foi possível copiar: {e}. Verifique as dependências do pyperclip.")
+        except Exception as e_general:
+             self.safe_log_message(f"Erro inesperado ao copiar: {e_general}", "ERROR")
+             Messagebox.show_error("Erro", f"Erro inesperado ao copiar: {e_general}")
+
+    def run_cypress_test(self, test_filepath, code_widget_ref, window_ref):
+        """Executa o teste Cypress especificado, instalando dependências se necessário."""
+        if not test_filepath:
+            # Se não há um arquivo salvo, salva o conteúdo atual do editor em um temporário
+            current_code_to_run = code_widget_ref.get("1.0", tk.END).strip()
+            temp_dir = "temp_cypress_tests"
+            os.makedirs(temp_dir, exist_ok=True)
+            temp_filename = f"temp_test_{int(time.time())}.cy.js"
+            test_filepath = os.path.join(temp_dir, temp_filename)
+            try:
+                with open(test_filepath, "w", encoding="utf-8") as f_temp:
+                    f_temp.write(current_code_to_run)
+                self.add_chat_message(f"Código atual salvo temporariamente em {test_filepath} para execução.", "system")
+            except Exception as e_temp_save:
+                self.add_chat_message(f"Erro ao salvar arquivo temporário: {e_temp_save}", "error_ia")
+                Messagebox.show_error("Erro", f"Não foi possível salvar arquivo temporário para execução: {e_temp_save}", parent=window_ref)
+                return
+        elif os.path.exists(test_filepath):
+            # Se o arquivo existe, atualiza-o com o conteúdo do editor antes de rodar
+            current_code_to_run = code_widget_ref.get("1.0", tk.END).strip()
+            try:
+                with open(test_filepath, "w", encoding="utf-8") as f_update:
+                    f_update.write(current_code_to_run)
+                self.add_chat_message(f"Arquivo {test_filepath} atualizado com o código do editor.", "system")
+            except Exception as e_update_save:
+                self.add_chat_message(f"Erro ao atualizar {test_filepath}: {e_update_save}", "error_ia")
+                Messagebox.show_error("Erro", f"Não foi possível atualizar {test_filepath}: {e_update_save}", parent=window_ref)
+                return
+        else:
+            Messagebox.show_error("Erro", f"Arquivo de teste não encontrado: {test_filepath}", parent=window_ref)
+            self.add_chat_message(f"Arquivo de teste não encontrado: {test_filepath}", "error_ia")
+            return
+
+        project_dir = os.path.dirname(os.path.dirname(os.path.abspath(test_filepath))) # Assume que o teste está em 'project_dir/cypress/e2e/teste.cy.js'
+        # Se o arquivo temporário está em 'temp_cypress_tests', o project_dir será o diretório pai de 'temp_cypress_tests'
+        if "temp_cypress_tests" in test_filepath:
+            project_dir = os.path.abspath(os.path.join(os.path.dirname(test_filepath), "..")) # Diretório pai de temp_cypress_tests
+            # Cria uma estrutura mínima de projeto Cypress se não existir
+            os.makedirs(os.path.join(project_dir, "cypress", "e2e"), exist_ok=True)
+            # Copia o teste temporário para a estrutura esperada pelo Cypress
+            target_cypress_e2e_dir = os.path.join(project_dir, "cypress", "e2e")
+            final_test_path_in_project = os.path.join(target_cypress_e2e_dir, os.path.basename(test_filepath))
+            shutil.copy2(test_filepath, final_test_path_in_project)
+            test_filepath_for_run_command = final_test_path_in_project # Usar este caminho para o comando run
+        else:
+            test_filepath_for_run_command = os.path.abspath(test_filepath)
+
+        self.add_chat_message(f"Preparando para executar: {os.path.basename(test_filepath_for_run_command)} em {project_dir}", "system")
+        self.show_progress(message=f"Executando {os.path.basename(test_filepath_for_run_command)}...", start_animation=True)
+
+        # Executa em uma thread para não bloquear a UI
+        threading.Thread(target=self._execute_cypress_thread, args=(project_dir, test_filepath_for_run_command, window_ref), daemon=True).start()
+
+    def _execute_cypress_thread(self, project_dir, absolute_test_filepath, parent_window):
+        log_widget = self.ai_chat_log # Usar o log do chat IA para feedback da execução
+        original_state = log_widget.cget("state")
+        self.safe_update_ui(lambda: log_widget.config(state="normal"))
+
+        try:
+            # 1. Verificar Node.js
+            self.safe_update_ui(lambda: self.add_chat_message("Verificando Node.js...", "system"))
+            node_path = shutil.which("node")
+            npm_path = shutil.which("npm")
+            npx_path = shutil.which("npx")
+            nodeenv_path = shutil.which("nodeenv")
+
+            if not (node_path and npm_path and npx_path):
+                self.safe_update_ui(lambda: self.add_chat_message("Node.js, npm ou npx não encontrados globalmente.", "warning"))
+                if nodeenv_path:
+                    self.safe_update_ui(lambda: self.add_chat_message("Tentando criar ambiente Node.js local com nodeenv...", "system"))
+                    venv_dir = os.path.join(project_dir, ".nodeenv") # Ambiente Node.js local
+                    if not os.path.exists(os.path.join(venv_dir, "bin", "node")):
+                        nodeenv_create_res = subprocess.run([nodeenv_path, venv_dir, "--node=lts", "--force"], capture_output=True, text=True, cwd=project_dir)
+                        if nodeenv_create_res.returncode != 0:
+                            raise Exception(f"Erro ao criar ambiente nodeenv: {nodeenv_create_res.stderr}")
+                        self.safe_update_ui(lambda: self.add_chat_message("Ambiente nodeenv LTS criado.", "success"))
+                    else:
+                        self.safe_update_ui(lambda: self.add_chat_message("Usando ambiente nodeenv existente.", "info"))
+                    
+                    # Atualiza os caminhos para usar o nodeenv
+                    activate_script = "activate.bat" if os.name == 'nt' else "activate"
+                    node_path = os.path.join(venv_dir, "Scripts" if os.name == 'nt' else "bin", "node")
+                    npm_path = os.path.join(venv_dir, "Scripts" if os.name == 'nt' else "bin", "npm")
+                    npx_path = os.path.join(venv_dir, "Scripts" if os.name == 'nt' else "bin", "npx")
+                    if not (os.path.exists(node_path) and os.path.exists(npm_path) and os.path.exists(npx_path)):
+                         raise Exception("Falha ao configurar caminhos do nodeenv.")
+                else:
+                    raise Exception("Node.js/npm/npx não encontrado e nodeenv não está disponível. Instale Node.js ou nodeenv (pip install nodeenv).")
+            
+            self.safe_update_ui(lambda: self.add_chat_message(f"Node.js encontrado: {node_path}", "success"))
+            npm_cmd = [npm_path]
+            npx_cmd = [npx_path]
+
+            # 2. Verificar package.json e criar se não existir
+            package_json_path = os.path.join(project_dir, "package.json")
+            if not os.path.exists(package_json_path):
+                self.safe_update_ui(lambda: self.add_chat_message("package.json não encontrado. Criando...", "system"))
+                init_res = subprocess.run(npm_cmd + ["init", "-y"], cwd=project_dir, capture_output=True, text=True, shell=(os.name=='nt'))
+                if init_res.returncode != 0:
+                    raise Exception(f"Erro ao criar package.json: {init_res.stderr}")
+                self.safe_update_ui(lambda: self.add_chat_message("package.json criado.", "success"))
+
+            # 3. Verificar Cypress
+            self.safe_update_ui(lambda: self.add_chat_message("Verificando Cypress...", "system"))
+            cypress_installed = False
+            try:
+                # Verifica se o Cypress está listado em dependências ou se o comando npx cypress --version funciona
+                with open(package_json_path, "r") as f_pkg:
+                    pkg_data = json.load(f_pkg)
+                    if "cypress" in pkg_data.get("devDependencies", {}) or "cypress" in pkg_data.get("dependencies", {}):
+                        cypress_installed = True
+                if not cypress_installed:
+                    cypress_version_res = subprocess.run(npx_cmd + ["cypress", "--version"], cwd=project_dir, capture_output=True, text=True, shell=(os.name=='nt'), timeout=30)
+                    if cypress_version_res.returncode == 0 and "Cypress" in cypress_version_res.stdout:
+                        cypress_installed = True
+                        self.safe_update_ui(lambda: self.add_chat_message(f"Cypress encontrado: {cypress_version_res.stdout.strip()}", "success"))
+            except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
+                cypress_installed = False # Assume não instalado se a verificação falhar
+            
+            if not cypress_installed:
+                self.safe_update_ui(lambda: self.add_chat_message("Cypress não encontrado. Tentando instalar...", "warning"))
+                install_cypress_q = queue.Queue()
+                def ask_install_dialog():
+                    if Messagebox.yesno("Cypress não encontrado. Deseja instalá-lo neste projeto?", "Instalar Cypress?", parent=parent_window) == "Yes":
+                        install_cypress_q.put(True)
+                    else:
+                        install_cypress_q.put(False)
+                
+                # Executa o diálogo na thread da UI
+                self.safe_update_ui(ask_install_dialog)
+                # Espera pela resposta do diálogo (bloqueia esta thread, não a UI)
+                should_install = install_cypress_q.get(timeout=60) 
+
+                if should_install:
+                    self.safe_update_ui(lambda: self.add_chat_message("Instalando Cypress (pode levar alguns minutos)...", "system"))
+                    install_res = subprocess.run(npm_cmd + ["install", "cypress", "--save-dev"], cwd=project_dir, capture_output=True, text=True, shell=(os.name=='nt'))
+                    if install_res.returncode != 0:
+                        raise Exception(f"Erro ao instalar Cypress: {install_res.stderr}")
+                    self.safe_update_ui(lambda: self.add_chat_message("Cypress instalado com sucesso.", "success"))
+                else:
+                    self.safe_update_ui(lambda: self.add_chat_message("Instalação do Cypress cancelada pelo usuário.", "info"))
+                    self.show_progress(show=False)
+                    self.safe_update_ui(lambda: log_widget.config(state=original_state))
+                    return
+            
+            # 4. Garantir estrutura de pastas e cypress.config.js
+            cypress_e2e_dir = os.path.join(project_dir, "cypress", "e2e")
+            os.makedirs(cypress_e2e_dir, exist_ok=True)
+            cypress_config_path = os.path.join(project_dir, "cypress.config.js")
+            if not os.path.exists(cypress_config_path):
+                self.safe_update_ui(lambda: self.add_chat_message("cypress.config.js não encontrado. Criando configuração padrão...", "system"))
+                with open(cypress_config_path, "w", encoding="utf-8") as f_cfg:
+                    f_cfg.write("const { defineConfig } = require(\"cypress\")\n\nmodule.exports = defineConfig({\n  e2e: {\n    setupNodeEvents(on, config) {\n      // implement node event listeners here\n    },\n    specPattern: \"cypress/e2e/**/*.cy.js\"\n  },\n});")
+                self.safe_update_ui(lambda: self.add_chat_message("cypress.config.js criado.", "success"))
+
+            # 5. Executar o teste
+            # O absolute_test_filepath já deve estar dentro da estrutura cypress/e2e do project_dir
+            relative_spec_path = os.path.relpath(absolute_test_filepath, project_dir).replace("\\", "/")
+            self.safe_update_ui(lambda: self.add_chat_message(f"Executando teste: {relative_spec_path}...", "command"))
+            
+            run_res = subprocess.run(npx_cmd + ["cypress", "run", "--spec", relative_spec_path], cwd=project_dir, capture_output=True, text=True, shell=(os.name=='nt'))
+            
+            if run_res.stdout:
+                self.safe_update_ui(lambda: self.add_chat_message(f"Saída do Cypress:\n{run_res.stdout}", "info"))
+            if run_res.stderr:
+                # Alguns logs do Cypress vão para stderr mesmo em sucesso, então não marcar como erro sempre
+                log_level_stderr = "error_ia" if run_res.returncode != 0 else "warning"
+                self.safe_update_ui(lambda: self.add_chat_message(f"Saída de Erro do Cypress:\n{run_res.stderr}", log_level_stderr))
+            
+            if run_res.returncode == 0:
+                self.safe_update_ui(lambda: self.add_chat_message("Teste Cypress executado com sucesso!", "success"))
+            else:
+                self.safe_update_ui(lambda: self.add_chat_message(f"Teste Cypress falhou (código de saída: {run_res.returncode}). Verifique os logs acima.", "error_ia"))
+
+        except Exception as e_run_thread:
+            self.safe_update_ui(lambda: self.add_chat_message(f"Erro crítico durante a execução do teste: {e_run_thread}", "error_ia"))
+            # Messagebox.show_error("Erro de Execução", f"Falha ao executar o teste: {e_run_thread}", parent=parent_window) # Pode ser muito intrusivo
+        finally:
+            self.show_progress(show=False)
+            self.safe_update_ui(lambda: log_widget.config(state=original_state))
+            # Limpa o arquivo temporário se foi criado
+            if "temp_cypress_tests" in absolute_test_filepath and os.path.exists(absolute_test_filepath):
+                try: 
+                    # os.remove(absolute_test_filepath) # O arquivo foi copiado, o original pode ser removido
+                    # Melhor remover o diretório temp_cypress_tests se estiver vazio ou apenas ele.
+                    temp_dir_to_clean = os.path.dirname(absolute_test_filepath)
+                    if os.path.basename(temp_dir_to_clean) == "e2e": # Se o temp foi copiado para e2e
+                        # A limpeza do projeto temporário é mais complexa, pode ser melhor deixar para o usuário
+                        pass 
+                except Exception as e_clean:
+                    self.safe_update_ui(lambda: self.add_chat_message(f"Aviso: não foi possível limpar arquivo temporário {absolute_test_filepath}: {e_clean}", "warning"))
+
+
+if __name__ == "__main__":
+    root = tk.Tk() # Usa tk.Tk() em vez de ttk.Window() para compatibilidade com Toplevels
+    app = TestGeneratorApp(root)
+    # Configura o tamanho mínimo da janela principal
+    root.minsize(600, 500)
+    # Centraliza a janela na tela (opcional)
+    # root.eval('tk::PlaceWindow . center') 
+    root.mainloop()
+
+
+--------------------------------------------------
+
+Diretório --->//(package.json):
+
+{
+  "name": "tool_ia",
+  "version": "1.0.0",
+  "main": "login_no_sistema.cy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+
+--------------------------------------------------
+

@@ -1,0 +1,12 @@
+{
+  "name": "tool_ia",
+  "version": "1.0.0",
+  "main": "login_no_sistema.cy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

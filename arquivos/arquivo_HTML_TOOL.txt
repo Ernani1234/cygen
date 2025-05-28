@@ -1,0 +1,1045 @@
+Diretório --->//(api_viewer.py):
+
+import tkinter as tk
+from tkinter import ttk, messagebox, simpledialog
+import requests
+
+def mostrar_painel_apis(janela, driver, historico, ajustar_janela, voltar_callback, capture_network_traffic, network_requests):
+    """Exibe um painel com as requisições de API capturadas e permite visualizar respostas com token."""
+    for widget in janela.winfo_children():
+        widget.destroy()
+    janela.title("Autenticação para Visualizar Requisições")
+
+    # Tela de autenticação
+    tk.Label(janela, text="Por favor, forneça as informações de autenticação necessárias:").pack(pady=5)
+
+    # Token Bearer
+    tk.Label(janela, text="Token Bearer (deixe em branco se não necessário):").pack(pady=5)
+    token_entry = tk.Entry(janela, width=50)
+    token_entry.pack(pady=5)
+
+    # Cookies
+    tk.Label(janela, text="Cookies (formato: nome=valor; nome=valor, deixe em branco se não necessário):").pack(pady=5)
+    cookies_entry = tk.Entry(janela, width=50)
+    cookies_entry.pack(pady=5)
+
+    # Cabeçalhos personalizados
+    tk.Label(janela, text="Cabeçalhos personalizados (formato: chave=valor; chave=valor, deixe em branco se não necessário):").pack(pady=5)
+    headers_entry = tk.Entry(janela, width=50)
+    headers_entry.pack(pady=5)
+
+    def prosseguir():
+        # Coleta as informações de autenticação
+        token = token_entry.get().strip()
+        cookies_raw = cookies_entry.get().strip()
+        headers_raw = headers_entry.get().strip()
+
+        # Processa cookies
+        cookies = {}
+        if cookies_raw:
+            for cookie in cookies_raw.split(';'):
+                if '=' in cookie:
+                    key, value = cookie.split('=', 1)
+                    cookies[key.strip()] = value.strip()
+
+        # Processa cabeçalhos personalizados
+        custom_headers = {}
+        if headers_raw:
+            for header in headers_raw.split(';'):
+                if '=' in header:
+                    key, value = header.split('=', 1)
+                    custom_headers[key.strip()] = value.strip()
+
+        # Prossegue para o painel de APIs
+        exibir_painel(token, cookies, custom_headers)
+
+    def exibir_painel(token, cookies, custom_headers):
+        for widget in janela.winfo_children():
+            widget.destroy()
+        janela.title("Visualizador de APIs")
+        historico.append("apis")
+
+        tk.Label(janela, text="Requisições de API em Execução:").pack(pady=5)
+
+        # Tabela com colunas para método e URL
+        colunas = ("Method", "URL")
+        tree = ttk.Treeview(janela, columns=colunas, show="headings", height=15)
+        tree.heading("Method", text="Método")
+        tree.heading("URL", text="URL da Requisição")
+        tree.column("Method", width=100)
+        tree.column("URL", width=500)
+        tree.pack(fill="both", expand=True, padx=5, pady=5)
+
+        atualizando = True
+        after_id = None
+
+        def atualizar_tabela():
+            nonlocal after_id
+            if not atualizando or not janela.winfo_exists():
+                return
+            
+            # Captura as requisições mais recentes
+            capture_network_traffic()
+            
+            urls_atuais = {tree.item(item)["values"][1] for item in tree.get_children() if tree.item(item)["values"]}
+            
+            for req in network_requests:
+                url = req["url"]
+                method = req["method"]
+                if url not in urls_atuais:
+                    tree.insert("", "end", values=(method, url))
+                    print(f"Adicionando requisição ao painel: {method} {url}")  # Log para depuração
+                    print(f"Request Headers: {req['requestHeaders']}")  # Log dos cabeçalhos enviados
+                    print(f"Request Body: {req['requestBody']}")  # Log do corpo da requisição
+                    if "responseHeaders" in req:
+                        print(f"Response Headers: {req['responseHeaders']}")
+                        print(f"Response Body: {req['responseBody']}")
+            
+            after_id = janela.after(1000, atualizar_tabela)
+
+        def on_url_click(event):
+            item = tree.selection()
+            if not item:
+                return
+            method, url = tree.item(item[0], "values")
+
+            headers = custom_headers.copy()
+            if token:
+                headers["Authorization"] = f"Bearer {token}"
+            headers["Sistemaid"] = "1"
+            headers["Content-Type"] = "application/json"
+            headers["Accept"] = "application/json, text/plain, */*"
+
+            try:
+                if method == "GET":
+                    response = requests.get(url, headers=headers, cookies=cookies, timeout=10)
+                elif method == "POST":
+                    response = requests.post(url, headers=headers, cookies=cookies, timeout=10)
+                elif method == "PUT":
+                    response = requests.put(url, headers=headers, cookies=cookies, timeout=10)
+                elif method == "DELETE":
+                    response = requests.delete(url, headers=headers, cookies=cookies, timeout=10)
+                else:
+                    messagebox.showerror("Erro", f"Método HTTP {method} não suportado.")
+                    return
+
+                response.raise_for_status()
+
+                janela_resposta = tk.Toplevel(janela)
+                janela_resposta.title(f"Resposta da API: {url}")
+                janela_resposta.geometry("600x400")
+
+                text_area = tk.Text(janela_resposta, wrap="word")
+                text_area.insert("1.0", response.text)
+                text_area.pack(fill="both", expand=True, padx=5, pady=5)
+
+                tk.Button(janela_resposta, text="Fechar", command=janela_resposta.destroy).pack(pady=5)
+            except requests.RequestException as e:
+                messagebox.showerror("Erro", f"Falha ao acessar a API: {str(e)}")
+
+        def parar_atualizacao():
+            nonlocal atualizando, after_id
+            atualizando = False
+            if after_id is not None:
+                janela.after_cancel(after_id)
+                after_id = None
+
+        tree.bind("<Double-1>", on_url_click)
+
+        tk.Button(janela, text="Voltar", command=lambda: [parar_atualizacao(), voltar_callback()]).pack(pady=5)
+
+        atualizar_tabela()
+        ajustar_janela()
+
+        janela.protocol("WM_DELETE_WINDOW", lambda: [parar_atualizacao(), janela.destroy()])
+
+    tk.Button(janela, text="Prosseguir", command=prosseguir).pack(pady=10)
+    ajustar_janela()
+--------------------------------------------------
+
+Diretório --->//(data_cy_checker.py):
+
+import os
+import tkinter as tk
+from tkinter import messagebox
+from bs4 import BeautifulSoup
+
+def verificar_data_cy(elemento):
+    """Verifica se o elemento tem o atributo [data-cy]."""
+    return "data-cy" in elemento.attrs
+
+def adicionar_indicador_data_cy(tree, elementos, checkboxes_globais):
+    """Adiciona uma exclamação vermelha na coluna Categoria para elementos sem [data-cy]."""
+    for item in tree.get_children():
+        tree.delete(item)
+    
+    for elemento in elementos:
+        id_ = elemento["id"]
+        texto = elemento["texto"] if elemento["texto"] else "(Nenhum)"
+        aria = elemento["aria_label"] if elemento["aria_label"] else "(Nenhum)"
+        categoria = elemento["categoria"]
+        tem_data_cy = verificar_data_cy(elemento["elemento"])
+        
+        if id_ not in checkboxes_globais:
+            checkboxes_globais[id_] = {"var": tk.BooleanVar(value=False), "elemento": elemento["elemento"]}
+        var = checkboxes_globais[id_]["var"]
+        
+        # Se não tem [data-cy], adiciona uma exclamação vermelha antes da categoria
+        categoria_display = f"⚠ {categoria}" if not tem_data_cy else categoria
+        
+        item_id = tree.insert("", "end", values=("✔" if var.get() else "", id_, texto, aria, categoria_display))
+        
+        # Aplica a cor vermelha apenas ao símbolo ⚠, mantendo o texto em preto
+        if not tem_data_cy:
+            tree.tag_configure("sem_data_cy", foreground="red")
+            # Aplica a tag apenas ao texto da célula "Categoria"
+            tree.set(item_id, "Categoria", categoria_display)
+
+def configurar_hover_data_cy(tree):
+    """Configura o evento de hover para mostrar/sumir a mensagem 'elemento sem data-cy'."""
+    tooltip = None
+    
+    def mostrar_mensagem(event):
+        nonlocal tooltip
+        # Identifica a célula sob o mouse
+        item = tree.identify_row(event.y)
+        if not item:
+            return
+        col = tree.identify_column(event.x)
+        if col != "#5":  # Coluna "Categoria"
+            return
+        
+        valores = tree.item(item, "values")
+        categoria = valores[4]
+        if not categoria.startswith("⚠"):
+            return
+        
+        # Remove qualquer tooltip existente antes de criar um novo
+        if tooltip:
+            tooltip.destroy()
+        
+        # Cria um novo tooltip
+        x, y = event.x_root, event.y_root
+        tooltip = tk.Toplevel(tree)
+        tooltip.wm_overrideredirect(True)
+        tooltip.wm_geometry(f"+{x+10}+{y+10}")
+        label = tk.Label(tooltip, text="elemento sem data-cy", bg="white", fg="black", relief="solid", borderwidth=1)
+        label.pack()
+    
+    def esconder_mensagem(event):
+        nonlocal tooltip
+        # Remove o tooltip ao sair da célula
+        if tooltip:
+            tooltip.destroy()
+            tooltip = None
+    
+    # Vincula os eventos
+    tree.bind("<Enter>", lambda e: None)  # Necessário para evitar comportamento indesejado
+    tree.bind("<Motion>", mostrar_mensagem)
+    tree.bind("<Leave>", esconder_mensagem)
+
+def denunciar_falta_data_cy(checkboxes_globais, pasta):
+    """Gera um arquivo de texto com os elementos selecionados sem [data-cy]."""
+    selecionados = {id_: info["elemento"] for id_, info in checkboxes_globais.items() if info["var"].get()}
+    if not selecionados:
+        messagebox.showwarning("Aviso", "Nenhum elemento selecionado para denunciar!")
+        return
+    
+    elementos_sem_data_cy = [elem for id_, elem in selecionados.items() if not verificar_data_cy(elem)]
+    if not elementos_sem_data_cy:
+        messagebox.showinfo("Info", "Todos os elementos selecionados possuem [data-cy]!")
+        return
+    
+    conteudo = ""
+    for i, elemento in enumerate(elementos_sem_data_cy, 1):
+        soup = BeautifulSoup(str(elemento), "html.parser")
+        elem = soup.find()  # Pega o primeiro elemento da string BeautifulSoup
+        categoria = determinar_categoria(elem)
+        aria_label = elem.get("aria-label", "(Nenhum)")
+        texto = elem.get_text(strip=True) or "(Nenhum)"
+        id_elem = elem.get("id", None)
+        
+        if aria_label == "(Nenhum)" and texto == "(Nenhum)" and id_elem:
+            identificador = f"ID = '{id_elem}'"
+        else:
+            identificador = aria_label if aria_label != "(Nenhum)" else texto
+        
+        conteudo += f"{i} - Elemento da categoria [{categoria}] sem data-cy, [{identificador}]\n"
+    
+    nome_arquivo = "denuncia_falta_data_cy"
+    caminho_arquivo = os.path.join(pasta, f"{nome_arquivo}.txt")
+    base, ext = os.path.splitext(caminho_arquivo)
+    contador = 1
+    while os.path.exists(caminho_arquivo):
+        caminho_arquivo = f"{base}_{contador}{ext}"
+        contador += 1
+    
+    with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
+        arquivo.write(conteudo)
+    
+    messagebox.showinfo("Sucesso", f"Denúncia salva em: {caminho_arquivo}")
+
+def determinar_categoria(elemento):
+    """Determina a categoria do elemento."""
+    tag = elemento.name.lower()
+    attrs = elemento.attrs
+    if tag == "button" or attrs.get("role", "").lower() == "button":
+        return "Botão"
+    elif tag == "input":
+        tipo = attrs.get("type", "").lower()
+        if tipo in ["button", "submit", "reset"]:
+            return "Botão"
+        elif tipo in ["text", "email", "password", "search", "tel", "url"]:
+            return "Input"
+    elif tag == "select":
+        return "Select"
+    elif tag == "a" and attrs.get("href"):
+        return "Link"
+    elif elemento.get_text(strip=True) and not attrs.get("role", "").lower() in ["combobox", "menuitem"]:
+        return "Texto"
+    elif attrs.get("role", "").lower() in ["combobox", "menuitem"]:
+        return "Select"
+    elif elemento.get("onclick") or elemento.get("tabindex") is not None:
+        return "Outros"
+    return "Outros"
+--------------------------------------------------
+
+Diretório --->//(htmlCatcher.py):
+
+import os
+import tkinter as tk
+from tkinter import messagebox, simpledialog, ttk
+from selenium import webdriver
+from selenium.webdriver.edge.service import Service
+from selenium.webdriver.edge.options import Options
+from selenium.common.exceptions import WebDriverException, SessionNotCreatedException
+import subprocess
+import re
+from urllib.parse import urlparse
+from bs4 import BeautifulSoup
+import pyperclip
+import api_viewer
+import json
+import time
+import data_cy_checker
+import url_history
+import threading
+
+MSEDGEDRIVER_PATH = "C:\\Users\\efonseca\\Desktop\\edgedriver\\edgedriver_win64\\msedgedriver.exe"
+
+requisicoes_salvas = set()
+network_requests = []
+monitoring = True  # Variável global para controlar o monitoramento
+
+def criar_pasta(caminho_pasta):
+    if not os.path.exists(caminho_pasta):
+        os.makedirs(caminho_pasta)
+    return caminho_pasta
+
+def remover_base64(html):
+    padrao = r'src="data:image/[^"]*"'
+    return re.sub(padrao, 'src=""', html)
+
+def salvar_html_em_txt(titulo, conteudo, pasta, nome_arquivo):
+    nome_seguro = "".join(c if c.isalnum() or c in "._-" else "_" for c in nome_arquivo)
+    if not nome_seguro.endswith(".txt"):
+        nome_seguro += ".txt"
+    caminho_arquivo = os.path.join(pasta, nome_seguro)
+    base, ext = os.path.splitext(caminho_arquivo)
+    contador = 1
+    while os.path.exists(caminho_arquivo):
+        caminho_arquivo = f"{base}_{contador}{ext}"
+        contador += 1
+    with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
+        arquivo.write(conteudo)
+    return caminho_arquivo
+
+def filtrar_html(html, filtro):
+    soup = BeautifulSoup(html, "html.parser")
+    resultado = ""
+    if filtro == "HTML Completo":
+        return remover_base64(html)
+    elif filtro == "Apenas IDs de Botões":
+        botoes = soup.find_all(["button", lambda tag: tag.name == "input" and tag.get("type") in ["button", "submit", "reset"]])
+        botoes_customizados = soup.find_all(lambda tag: tag.get("role") == "button")
+        resultado = "IDs de Botões encontrados:\n"
+        ids_encontrados = set()
+        for botao in botoes + botoes_customizados:
+            id_botao = botao.get("id")
+            if id_botao:
+                ids_encontrados.add(f"ID: {id_botao} (Tag: {botao.name})")
+        resultado += "\n".join(sorted(ids_encontrados))
+        return resultado if ids_encontrados else "Nenhum ID de botão encontrado."
+    elif filtro == "Apenas Inputs":
+        inputs = soup.find_all("input")
+        resultado = "Inputs encontrados:\n"
+        for inp in inputs:
+            resultado += str(inp) + "\n"
+        return resultado if resultado != "Inputs encontrados:\n" else "Nenhum input encontrado."
+    return "Filtro inválido."
+
+def extrair_elementos_com_texto_ou_aria(html):
+    soup = BeautifulSoup(html, "html.parser")
+    elementos = []
+    tags_clicaveis = ["button", "a", "input", "select"]
+    for elemento in soup.find_all(True):
+        eh_clicavel = (
+            elemento.name in tags_clicaveis or
+            elemento.get("onclick") is not None or
+            elemento.get("role") == "button" or
+            elemento.get("tabindex") is not None or
+            elemento.get("href") is not None
+        )
+        if eh_clicavel:
+            texto = elemento.get_text(strip=True)
+            aria_label = elemento.get("aria-label", "")
+            id_elem = elemento.get("id", f"{elemento.name}_{len(elementos)}")
+            categoria = data_cy_checker.determinar_categoria(elemento)
+            elementos.append({
+                "id": id_elem,
+                "texto": texto,
+                "aria_label": aria_label,
+                "tag": elemento.name,
+                "elemento": elemento,
+                "categoria": categoria
+            })
+    return elementos
+
+def gerar_seletores(elemento):
+    seletores = []
+    tag = elemento.name
+    atributos = elemento.attrs
+    seletores.append(tag)
+    if "id" in atributos:
+        seletores.append(f"#{atributos['id']}")
+        seletores.append(f"{tag}#{atributos['id']}")
+    if "class" in atributos:
+        classes = atributos["class"]
+        for classe in classes:
+            seletores.append(f".{classe}")
+            seletores.append(f"{tag}.{classe}")
+        if len(classes) > 1:
+            seletores.append(f"{tag}.{'.'.join(classes)}")
+    atributos_relevantes = ["aria-label", "aria-expanded", "aria-controls", "aria-owns", "role", "type", "data-cy", "tabindex", "name"]
+    for attr in atributos_relevantes:
+        if attr in atributos and atributos[attr]:
+            valor = atributos[attr]
+            if isinstance(valor, (list, tuple)):
+                valor = valor[0]
+            seletores.append(f'{tag}[{attr}="{valor}"]')
+            if "id" in atributos:
+                seletores.append(f'#{atributos["id"]}[{attr}="{valor}"]')
+    attrs_combinados = []
+    for attr in atributos_relevantes:
+        if attr in atributos and atributos[attr]:
+            valor = atributos[attr]
+            if isinstance(valor, (list, tuple)):
+                valor = valor[0]
+            attrs_combinados.append(f'[{attr}="{valor}"]')
+    if len(attrs_combinados) > 1:
+        seletores.append(f"{tag}{''.join(attrs_combinados)}")
+    return sorted(set(seletores))
+
+def salvar_requisicao_api(url, headers, resposta, pasta):
+    caminho_parseado = urlparse(url)
+    nome_base = caminho_parseado.path.split("/")[-1] or "requisicao"
+    nome_seguro = "".join(c if c.isalnum() or c in "._-" else "_" for c in nome_base)
+    if not nome_seguro:
+        nome_seguro = "requisicao_desconhecida"
+    nome_arquivo = f"{nome_seguro}.txt"
+    caminho_arquivo = os.path.join(pasta, nome_arquivo)
+    base, ext = os.path.splitext(caminho_arquivo)
+    contador = 1
+    while os.path.exists(caminho_arquivo):
+        caminho_arquivo = f"{base}_{contador}{ext}"
+        contador += 1
+    with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
+        arquivo.write(f"URL: {url}\n\n")
+        arquivo.write("Headers:\n")
+        for chave, valor in headers.items():
+            arquivo.write(f"{chave}: {valor}\n")
+        arquivo.write("\nResposta:\n")
+        arquivo.write(resposta if resposta else "Nenhuma resposta capturada")
+    return caminho_arquivo
+
+def abrir_explorador(pasta):
+    subprocess.Popen(f'explorer "{pasta}"')
+
+def criar_navegador():
+    try:
+        edge_options = Options()
+        edge_options.add_argument("--log-level=3")
+        edge_options.add_argument("--guest")
+        edge_options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        edge_options.set_capability("ms:edgeOptions", {"args": ["--remote-allow-origins=*"]})
+        service = Service(MSEDGEDRIVER_PATH)
+        driver = webdriver.Edge(service=service, options=edge_options)
+        return driver
+    except SessionNotCreatedException as e:
+        messagebox.showerror("Erro", f"Erro ao criar o navegador. Verifique a versão do msedgedriver: {str(e)}")
+        raise
+    except Exception as e:
+        messagebox.showerror("Erro", f"Erro ao iniciar o navegador: {str(e)}")
+        raise
+
+def iniciar_navegador():
+    driver = None
+    try:
+        driver = criar_navegador()
+        pasta_arquivos = criar_pasta(os.path.join(os.getcwd(), "arquivos"))
+        pasta_api = criar_pasta(os.path.join(os.getcwd(), "api_requisicoes"))
+        
+        driver.execute_cdp_cmd("Network.enable", {})
+        
+        pending_requests = {}
+
+        def capture_network_traffic():
+            global network_requests, pending_requests
+            try:
+                logs = driver.get_log("performance")
+                for entry in logs:
+                    message = json.loads(entry["message"])["message"]
+                    if message["method"] == "Network.requestWillBeSent":
+                        request_id = message["params"]["requestId"]
+                        request = message["params"]["request"]
+                        pending_requests[request_id] = {
+                            "url": request["url"],
+                            "method": request["method"],
+                            "requestHeaders": request["headers"],
+                            "requestBody": request.get("postData", ""),
+                            "type": message["params"]["type"]
+                        }
+                        print(f"Requisição capturada: {request['method']} {request['url']}")
+                    elif message["method"] == "Network.responseReceived":
+                        request_id = message["params"]["requestId"]
+                        if request_id in pending_requests:
+                            response = message["params"]["response"]
+                            req = pending_requests[request_id]
+                            req["responseHeaders"] = response["headers"]
+                            try:
+                                body = driver.execute_cdp_cmd("Network.getResponseBody", {"requestId": request_id})
+                                req["responseBody"] = body.get("body", "")
+                            except:
+                                req["responseBody"] = ""
+                            network_requests.append(req)
+                            del pending_requests[request_id]
+                            print(f"Resposta capturada: {req['method']} {req['url']}")
+            except Exception as e:
+                print(f"Erro ao capturar tráfego de rede: {str(e)}")
+
+        janela = tk.Tk()
+        janela.title("HTML Catcher")
+        janela.geometry("")
+        
+        historico = ["inicio"]
+        checkboxes_globais = {}
+        
+        def ajustar_janela():
+            janela.update()
+            janela.geometry("")
+        
+        def reconectar_navegador():
+            nonlocal driver
+            try:
+                if driver is None:
+                    raise WebDriverException("Driver está None")
+                driver.title
+                return True
+            except (WebDriverException, AttributeError):
+                messagebox.showinfo("Reconexão", "Navegador desconectado. Tentando reconectar...")
+                try:
+                    if driver:
+                        driver.quit()
+                    driver = criar_navegador()
+                    messagebox.showinfo("Sucesso", "Navegador reconectado com sucesso!")
+                    return True
+                except Exception as e:
+                    messagebox.showerror("Erro", f"Falha ao reconectar: {str(e)}")
+                    driver = None
+                    janela.destroy()
+                    return False
+
+        def abrir_url():
+            if not reconectar_navegador():
+                return
+            url = entry_url.get().strip()
+            if url:
+                if not url.startswith("http"):
+                    url = "https://" + url
+                driver.get(url)
+                url_history.add_url(url)  # Add URL to history
+                time.sleep(2)
+                capture_network_traffic()
+                messagebox.showinfo("Sucesso", f"Navegador aberto em: {url}")
+            else:
+                messagebox.showwarning("Aviso", "Insira uma URL!")
+
+        def monitor_url(driver, interval=1):
+            global monitoring
+            last_url = None
+            while monitoring:
+                try:
+                    current_url = driver.current_url
+                    if current_url != last_url:
+                        url_history.add_url(current_url)
+                        last_url = current_url
+                except Exception as e:
+                    print(f"Erro ao monitorar URL: {e}")
+                    break
+                time.sleep(interval)
+
+        # Iniciar o thread de monitoramento
+        monitoring_thread = threading.Thread(target=monitor_url, args=(driver,))
+        monitoring_thread.start()
+
+        def mostrar_tela_inicial(janela=janela):
+            for widget in janela.winfo_children():
+                widget.destroy()
+            janela.title("HTML Catcher")
+            tk.Label(janela, text="Digite a URL:").pack(pady=5)
+            nonlocal entry_url
+            entry_url = tk.Entry(janela, width=40)
+            entry_url.insert(0, "https://qa.sgpm.inovvati.com.br")
+            entry_url.pack(pady=5)
+
+            # Criar um frame para os botões
+            frame_botoes = tk.Frame(janela)
+            frame_botoes.pack(pady=10)
+
+            # Adicionar botões ao frame usando grid
+            tk.Button(frame_botoes, text="Abrir URL", command=abrir_url).grid(row=0, column=0, padx=5, pady=5)
+            tk.Button(frame_botoes, text="Salvar HTML", command=lambda: [historico.append("filtros"), mostrar_filtros_html(janela)]).grid(row=0, column=1, padx=5, pady=5)
+            tk.Button(frame_botoes, text="Ver Arquivos", command=lambda: abrir_explorador(pasta_arquivos)).grid(row=0, column=2, padx=5, pady=5)
+            tk.Button(frame_botoes, text="Ver APIs", command=lambda: api_viewer.mostrar_painel_apis(janela, driver, historico, ajustar_janela, voltar, capture_network_traffic, network_requests)).grid(row=1, column=0, padx=5, pady=5)
+            tk.Button(frame_botoes, text="Ver URL", command=lambda: [historico.append("historico_urls"), url_history.mostrar_historico_urls(janela, historico, voltar, pasta_arquivos, ajustar_janela)]).grid(row=1, column=1, padx=5, pady=5)
+            tk.Button(frame_botoes, text="Fechar", command=fechar_navegador).grid(row=1, column=2, padx=5, pady=5)
+
+            ajustar_janela()
+
+        def mostrar_filtros_html(janela=janela):
+            for widget in janela.winfo_children():
+                widget.destroy()
+            janela.title("Filtros HTML")
+            tk.Label(janela, text="Escolha o filtro para salvar o HTML:").pack(pady=10)
+            
+            def salvar_com_filtro(filtro):
+                if not reconectar_navegador():
+                    return
+                try:
+                    titulo = driver.title or "Sem_Título"
+                    html = driver.page_source
+                    conteudo_filtrado = filtrar_html(html, filtro)
+                    nome_arquivo = simpledialog.askstring("Nome do Arquivo", "Digite o nome do arquivo (sem extensão):", initialvalue=f"{titulo}_{filtro.replace(' ', '_')}")
+                    if nome_arquivo:
+                        caminho_arquivo = salvar_html_em_txt(titulo, conteudo_filtrado, pasta_arquivos, nome_arquivo)
+                        messagebox.showinfo("Sucesso", f"Conteúdo salvo em: {caminho_arquivo}")
+                        voltar()
+                except Exception as e:
+                    messagebox.showerror("Erro", f"Erro ao salvar: {str(e)}")
+
+            tk.Button(janela, text="HTML Completo", command=lambda: salvar_com_filtro("HTML Completo")).pack(pady=5)
+            tk.Button(janela, text="Apenas IDs de Botões", command=lambda: salvar_com_filtro("Apenas IDs de Botões")).pack(pady=5)
+            tk.Button(janela, text="Apenas Inputs", command=lambda: salvar_com_filtro("Apenas Inputs")).pack(pady=5)
+            tk.Button(janela, text="Captor de Parâmetros", command=lambda: [historico.append("captor"), mostrar_captor_parametros(janela)]).pack(pady=5)
+            tk.Button(janela, text="Voltar", command=voltar).pack(pady=5)
+            ajustar_janela()
+
+        def mostrar_captor_parametros(janela=janela):
+            if not reconectar_navegador():
+                return
+            html = driver.page_source
+            elementos = extrair_elementos_com_texto_ou_aria(html)
+            for widget in janela.winfo_children():
+                widget.destroy()
+            janela.title("Captor de Parâmetros")
+            
+            frame_search = tk.Frame(janela)
+            frame_search.pack(pady=5, fill="x")
+            
+            tk.Label(frame_search, text="Filtrar ID:").grid(row=0, column=0, padx=5, sticky="e")
+            search_id = tk.Entry(frame_search, width=20)
+            search_id.grid(row=0, column=1, padx=5)
+            
+            tk.Label(frame_search, text="Filtrar Texto:").grid(row=0, column=2, padx=5, sticky="e")
+            search_texto = tk.Entry(frame_search, width=20)
+            search_texto.grid(row=0, column=3, padx=5)
+            
+            tk.Label(frame_search, text="Filtrar Aria-label:").grid(row=0, column=4, padx=5, sticky="e")
+            search_aria = tk.Entry(frame_search, width=20)
+            search_aria.grid(row=0, column=5, padx=5)
+            
+            tk.Label(frame_search, text="Filtrar Categoria:").grid(row=0, column=6, padx=5, sticky="e")
+            search_categoria = tk.Entry(frame_search, width=20)
+            search_categoria.grid(row=0, column=7, padx=5)
+            
+            tk.Label(janela, text="Elementos Clicáveis:").pack(pady=5)
+            colunas = ("Checkbox", "ID", "Texto", "Aria-label", "Categoria")
+            tree = ttk.Treeview(janela, columns=colunas, show="headings", height=15)
+            tree.heading("Checkbox", text="Selecionar")
+            tree.heading("ID", text="ID")
+            tree.heading("Texto", text="Texto")
+            tree.heading("Aria-label", text="Aria-label")
+            tree.heading("Categoria", text="Categoria")
+            
+            tree.column("Checkbox", width=80, anchor="center")
+            tree.column("ID", width=150)
+            tree.column("Texto", width=200)
+            tree.column("Aria-label", width=200)
+            tree.column("Categoria", width=100)
+            
+            tree.pack(fill="both", expand=True, padx=5, pady=5)
+            
+            def atualizar_tabela():
+                data_cy_checker.adicionar_indicador_data_cy(tree, [e for e in elementos if (
+                    search_id.get().lower() in e["id"].lower() and
+                    search_texto.get().lower() in (e["texto"] if e["texto"] else "(Nenhum)").lower() and
+                    search_aria.get().lower() in (e["aria_label"] if e["aria_label"] else "(Nenhum)").lower() and
+                    search_categoria.get().lower() in e["categoria"].lower()
+                )], checkboxes_globais)
+            
+            def toggle_checkbox(event):
+                item = tree.identify_row(event.y)
+                if item and tree.identify_column(event.x) == "#1":
+                    valores = tree.item(item, "values")
+                    id_ = valores[1]
+                    if id_ in checkboxes_globais:
+                        current_value = checkboxes_globais[id_]["var"].get()
+                        checkboxes_globais[id_]["var"].set(not current_value)
+                        atualizar_checkboxes()
+            
+            def atualizar_checkboxes():
+                for item in tree.get_children():
+                    valores = tree.item(item, "values")
+                    id_ = valores[1]
+                    if id_ in checkboxes_globais:
+                        checkbox_text = "☑" if checkboxes_globais[id_]["var"].get() else "☐"
+                        tree.item(item, values=(checkbox_text, *valores[1:]))
+            
+            def limpar_selecao():
+                for info in checkboxes_globais.values():
+                    info["var"].set(False)
+                atualizar_checkboxes()
+            
+            def exportar_para_txt():
+                selecionados = {id_: info["elemento"] for id_, info in checkboxes_globais.items() if info["var"].get()}
+                if not selecionados:
+                    messagebox.showwarning("Aviso", "Nenhum elemento selecionado para exportar!")
+                    return
+                
+                # Obtém a URL atual do driver
+                try:
+                    current_url = driver.current_url
+                except Exception as e:
+                    current_url = "URL não disponível"
+                    print(f"Erro ao obter URL: {str(e)}")
+
+                # Cria uma janela para seleção de seletores e descrições
+                export_window = tk.Toplevel(janela)
+                export_window.title("Exportar Seletores")
+                export_window.geometry("800x600")
+                export_window.resizable(True, True)
+
+                # Frame principal com scroll
+                canvas = tk.Canvas(export_window)
+                scrollbar = ttk.Scrollbar(export_window, orient="vertical", command=canvas.yview)
+                scrollable_frame = ttk.Frame(canvas)
+
+                scrollable_frame.bind(
+                    "<Configure>",
+                    lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+                )
+
+                canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+                canvas.configure(yscrollcommand=scrollbar.set)
+
+                # Habilitar scroll do mouse
+                def on_mouse_wheel(event):
+                    canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+                export_window.bind_all("<MouseWheel>", on_mouse_wheel)
+
+                # Dicionário para armazenar seletores escolhidos e descrições
+                seletores_escolhidos = {}
+                descricoes = {}
+
+                # Para cada elemento selecionado
+                for id_, elemento_bs in selecionados.items():
+                    seletores = gerar_seletores(elemento_bs)
+                    seletores_escolhidos[id_] = {}
+                    descricoes[id_] = tk.StringVar(value="")
+
+                    # Frame para cada elemento
+                    frame_elem = ttk.LabelFrame(scrollable_frame, text=f"Elemento: {id_}", padding=5)
+                    frame_elem.pack(fill="x", padx=10, pady=5, expand=True)
+
+                    # Campo de descrição
+                    ttk.Label(frame_elem, text="Descrição:").pack(anchor="w")
+                    desc_entry = ttk.Entry(frame_elem, textvariable=descricoes[id_], width=70)
+                    desc_entry.pack(fill="x", pady=2)
+
+                    # Lista de seletores com checkboxes
+                    ttk.Label(frame_elem, text="Seletores disponíveis (marque para incluir):").pack(anchor="w")
+                    for seletor in seletores:
+                        var = tk.BooleanVar(value=True)  # Por padrão, todos selecionados
+                        seletores_escolhidos[id_][seletor] = var
+                        cb = ttk.Checkbutton(frame_elem, text=seletor, variable=var)
+                        cb.pack(anchor="w", padx=5)
+
+                # Função para desabilitar seleção
+                def desabilitar_selecao():
+                    for id_ in seletores_escolhidos:
+                        for var in seletores_escolhidos[id_].values():
+                            var.set(False)
+
+                # Função para finalizar a exportação
+                def finalizar_exportacao():
+                    conteudo = ""
+                    for idx, (id_, elemento_bs) in enumerate(selecionados.items(), start=1):
+                        seletores_selecionados = [s for s, v in seletores_escolhidos[id_].items() if v.get()]
+                        if not seletores_selecionados:
+                            continue  # Pula se nenhum seletor foi escolhido
+                        descricao = descricoes[id_].get().strip() or "Sem descrição"
+                        conteudo += f"\n\n--[Elemento {idx}: {id_}]--\n"
+                        conteudo += f"URL: {current_url}\n"
+                        conteudo += f"Descrição: {descricao}\n"
+                        conteudo += "Seletores:\n"
+                        conteudo += "\n".join(seletores_selecionados) + "\n"
+                    
+                    conteudo = conteudo.lstrip()
+                    if not conteudo:
+                        messagebox.showwarning("Aviso", "Nenhum seletor selecionado para exportar!")
+                        export_window.destroy()
+                        return
+
+                    pasta = criar_pasta(os.path.join(os.getcwd(), "arquivos"))
+                    nome_arquivo = simpledialog.askstring("Exportar", "Digite o nome do arquivo (sem extensão):", initialvalue="exportacao_parametros", parent=export_window)
+                    if nome_arquivo:
+                        caminho = salvar_html_em_txt("Exportação", conteudo, pasta, nome_arquivo)
+                        messagebox.showinfo("Sucesso", f"Exportado com sucesso em: {caminho}")
+                        export_window.destroy()
+
+                # Botões de controle
+                frame_botoes = ttk.Frame(export_window)
+                frame_botoes.pack(fill="x", pady=10)
+                ttk.Button(frame_botoes, text="Exportar", command=finalizar_exportacao).pack(side="left", padx=5)
+                ttk.Button(frame_botoes, text="Desabilitar Seleção", command=desabilitar_selecao).pack(side="left", padx=5)
+                ttk.Button(frame_botoes, text="Cancelar", command=export_window.destroy).pack(side="left", padx=5)
+
+                # Configuração do scroll
+                canvas.pack(side="left", fill="both", expand=True)
+                scrollbar.pack(side="right", fill="y")
+
+                # Ajusta a janela
+                export_window.update()
+                export_window.grab_set()  # Modal
+                janela.wait_window(export_window)            
+
+            
+            def denunciar_falta_data_cy():
+                data_cy_checker.denunciar_falta_data_cy(checkboxes_globais, pasta_arquivos)
+            
+            def on_item_click(event):
+                item = tree.selection()
+                if not item:
+                    return
+                item = item[0]
+                valores = tree.item(item, "values")
+                id_clicado = valores[1]
+                elemento_relevante = next((e for e in elementos if e["id"] == id_clicado), None)
+                if elemento_relevante:
+                    historico.append("seletores")
+                    mostrar_seletores(elemento_relevante["elemento"], id_clicado)
+            
+            atualizar_tabela()
+            search_id.bind("<KeyRelease>", lambda e: atualizar_tabela())
+            search_texto.bind("<KeyRelease>", lambda e: atualizar_tabela())
+            search_aria.bind("<KeyRelease>", lambda e: atualizar_tabela())
+            search_categoria.bind("<KeyRelease>", lambda e: atualizar_tabela())
+            tree.bind("<Double-1>", on_item_click)
+            tree.bind("<Button-1>", toggle_checkbox)
+            data_cy_checker.configurar_hover_data_cy(tree)
+            
+            frame_botoes = tk.Frame(janela)
+            frame_botoes.pack(pady=5)
+            tk.Button(frame_botoes, text="Exportar para .txt", command=exportar_para_txt).pack(side="left", padx=5)
+            tk.Button(frame_botoes, text="Limpar seleção", command=limpar_selecao).pack(side="left", padx=5)
+            tk.Button(frame_botoes, text="Denunciar falta de [data-cy]", command=denunciar_falta_data_cy).pack(side="left", padx=5)
+            tk.Button(frame_botoes, text="Voltar", command=voltar).pack(side="left", padx=5)
+            
+            ajustar_janela()
+
+            def contar_ocorrencias_seletor(driver, seletor):
+                try:
+                    elementos = driver.find_elements("css selector", seletor)
+                    return len(elementos)
+                except Exception:
+                    return 0
+
+            def mostrar_seletores(elemento, id_selecionado, janela=janela):
+                if not reconectar_navegador():
+                    return
+                for widget in janela.winfo_children():
+                    widget.destroy()
+                janela.title(f"Seletores para {id_selecionado}")
+                tk.Label(janela, text=f"Seletores possíveis para {id_selecionado} (clique para copiar):").pack(pady=5)
+                
+                seletores = gerar_seletores(elemento)
+                
+                frame_seletores = tk.Frame(janela)
+                frame_seletores.pack(fill="x", padx=10, pady=5)
+                
+                for seletor in seletores:
+                    ocorrencias = contar_ocorrencias_seletor(driver, seletor)
+                    
+                    if ocorrencias == 1:
+                        cor = "green"
+                        negrito = True
+                    elif 2 <= ocorrencias <= 9:
+                        cor = "yellow"
+                        negrito = True
+                    elif ocorrencias >= 10:
+                        cor = "red"
+                        negrito = True
+                    else:
+                        cor = "black"
+                        negrito = False
+                    
+                    frame_linha = tk.Frame(frame_seletores)
+                    frame_linha.pack(fill="x", pady=2)
+                    
+                    def copiar_seletor(s=seletor):
+                        pyperclip.copy(s)
+                        messagebox.showinfo("Copiado", f"Seletor '{s}' copiado!")
+                    
+                    label_seletor = tk.Label(frame_linha, text=seletor, fg="blue", cursor="hand2")
+                    label_seletor.pack(side="left")
+                    label_seletor.bind("<Button-1>", lambda e, s=seletor: copiar_seletor(s))
+                    
+                    texto_contagem = f"[usado {ocorrencias} vezes]"
+                    label_contagem = tk.Label(frame_linha, text=texto_contagem, fg=cor)
+                    if negrito:
+                        label_contagem.config(font=("TkDefaultFont", 9, "bold"))
+                    label_contagem.pack(side="right")
+                
+                tk.Button(janela, text="Voltar", command=voltar).pack(pady=5)
+                ajustar_janela()
+
+        def voltar():
+            if len(historico) > 1:
+                historico.pop()
+                estado_anterior = historico[-1]
+                if estado_anterior == "inicio":
+                    mostrar_tela_inicial(janela)
+                elif estado_anterior == "filtros":
+                    mostrar_filtros_html(janela)
+                elif estado_anterior == "captor":
+                    mostrar_captor_parametros(janela)
+                elif estado_anterior == "apis":
+                    api_viewer.mostrar_painel_apis(janela, driver, historico, ajustar_janela, voltar, capture_network_traffic, network_requests)
+                elif estado_anterior == "historico_urls":
+                    url_history.mostrar_historico_urls(janela, historico, voltar, pasta_arquivos, ajustar_janela)
+            ajustar_janela()
+
+        def fechar_navegador():
+            global monitoring
+            monitoring = False  # Interrompe o loop de monitoramento
+            if driver:
+                driver.quit()
+            janela.destroy()
+
+        entry_url = None
+        mostrar_tela_inicial()
+
+        janela.mainloop()
+        
+    except Exception as e:
+        messagebox.showerror("Erro", f"Ocorreu um erro: {str(e)}")
+        if driver:
+            driver.quit()
+
+if __name__ == "__main__":
+    iniciar_navegador()
+--------------------------------------------------
+
+Diretório --->//(url_history.py):
+
+import tkinter as tk
+from tkinter import ttk, messagebox, simpledialog
+
+visited_urls = []  # Global list to store visited URLs
+
+def add_url(url):
+    """Add a URL to the history."""
+    visited_urls.append(url)
+
+def mostrar_historico_urls(janela, historico, voltar, pasta_arquivos, ajustar_janela):
+    """Display a panel with the history of visited URLs."""
+    for widget in janela.winfo_children():
+        widget.destroy()
+    janela.title("Histórico de URLs")
+    tk.Label(janela, text="Histórico de URLs visitadas:").pack(pady=5)
+
+    colunas = ("Select", "URL")
+    tree = ttk.Treeview(janela, columns=colunas, show="headings", height=15)
+    tree.heading("Select", text="Selecionar")
+    tree.heading("URL", text="URL")
+    tree.column("Select", width=80, anchor="center")
+    tree.column("URL", width=400)
+    tree.pack(fill="both", expand=True, padx=5, pady=5)
+
+    checkboxes_urls = {i: tk.BooleanVar(value=False) for i in range(len(visited_urls))}
+
+    for i, url in enumerate(visited_urls):
+        checkbox_text = "☐"
+        tree.insert("", "end", iid=i, values=(checkbox_text, url))
+
+    def toggle_checkbox(event):
+        item = tree.identify_row(event.y)
+        if item and tree.identify_column(event.x) == "#1":
+            i = int(item)
+            current_value = checkboxes_urls[i].get()
+            checkboxes_urls[i].set(not current_value)
+            checkbox_text = "☑" if not current_value else "☐"
+            tree.item(item, values=(checkbox_text, visited_urls[i]))
+
+    tree.bind("<Button-1>", toggle_checkbox)
+
+    def exportar_urls():
+        selected_indices = [i for i in range(len(visited_urls)) if checkboxes_urls[i].get()]
+        if not selected_indices:
+            messagebox.showwarning("Aviso", "Nenhuma URL selecionada para exportar!")
+            return
+
+        resposta = messagebox.askyesno("Exportar", "Deseja adicionar descrições às URLs selecionadas?")
+        desc_dict = {}
+        if resposta:
+            desc_window = tk.Toplevel(janela)
+            desc_window.title("Adicionar Descrições")
+            descriptions = {i: tk.StringVar() for i in selected_indices}
+            for i in selected_indices:
+                tk.Label(desc_window, text=f"URL: {visited_urls[i]}").pack()
+                tk.Entry(desc_window, textvariable=descriptions[i]).pack()
+            tk.Button(desc_window, text="OK", command=desc_window.destroy).pack()
+            desc_window.grab_set()
+            janela.wait_window(desc_window)
+            desc_dict = {i: descriptions[i].get() for i in selected_indices}
+        else:
+            desc_dict = {i: "" for i in selected_indices}
+
+        conteudo = ""
+        for idx, i in enumerate(selected_indices, start=1):
+            url = visited_urls[i]
+            desc = desc_dict[i]
+            conteudo += f"URL{idx} {url}, descrição:{desc};\n\n"
+
+        nome_arquivo = simpledialog.askstring("Exportar", "Digite o nome do arquivo (sem extensão):", initialvalue="historico_urls")
+        if nome_arquivo:
+            from htmlCatcher import salvar_html_em_txt  # Import here to avoid circular import
+            caminho_arquivo = salvar_html_em_txt("Histórico de URLs", conteudo, pasta_arquivos, nome_arquivo)
+            messagebox.showinfo("Sucesso", f"Histórico de URLs salvo em: {caminho_arquivo}")
+
+    tk.Button(janela, text="Exportar .txt", command=exportar_urls).pack(pady=5)
+    tk.Button(janela, text="Voltar", command=voltar).pack(pady=5)
+    ajustar_janela()
+--------------------------------------------------
+
