@@ -206,3 +206,103 @@ export const subtract = (a, b) => a - b;
 
         print(f"\nCheck the directory '{test_base_path.resolve()}' to see the populated structure.")
         print("Remember to manually clean it up if needed (e.g., by deleting the 'test_project_root_populated' directory).")
+
+
+# New public function as requested
+def initiate_cypress_structure_generation(base_output_path: str, test_name: str = "example_test") -> str:
+    """
+    Initializes a Cypress test structure with sample files in the specified base_output_path.
+
+    Args:
+        base_output_path: The root directory where the Cypress structure will be created.
+        test_name: An optional name to be incorporated into generated sample files.
+
+    Returns:
+        The absolute path to base_output_path.
+    """
+    # Ensure the base_output_path directory is created
+    output_path = Path(base_output_path)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    generator = StructureGenerator()
+
+    # 1. Generate base directory structure
+    generator.generate_cypress_structure(str(output_path))
+
+    # 2. Create a fixture file
+    generator.create_fixture_file(
+        str(output_path), 
+        f"{test_name}_fixture", 
+        {"user": f"{test_name}_user", "password": "password123"}
+    )
+
+    # 3. Create an E2E spec file
+    generator.create_e2e_spec_file(
+        str(output_path), 
+        f"{test_name}_spec", 
+        f"{test_name.capitalize()} Test Suite", 
+        f"it('should successfully run {test_name}', () => {{ cy.visit('/'); }});"
+    )
+
+    # 4. Create a support command
+    generator.create_support_command(
+        str(output_path),
+        f"{test_name}_command",
+        f"// {test_name} custom command\nCypress.Commands.add('{test_name}_login', (username, password) => {{ \n  cy.log(`Logging in as {test_name} user: ${username}`);\n  // Add actual login steps here\n}});")
+
+    # 5. Create a helper file
+    generator.create_helper_file(
+        str(output_path),
+        f"{test_name}_helper",
+        f"// {test_name} helper function\nexport function {test_name}_greet(name) {{\n  return `Hello, ${name} from {test_name}_helper!`;\n}}"
+    )
+    
+    absolute_path = str(output_path.resolve())
+    print(f"Cypress structure generation complete for '{test_name}' in: {absolute_path}")
+    return absolute_path
+
+
+if __name__ == '__main__':
+    generator = StructureGenerator()
+    test_base_path_str = "test_project_root_populated"
+    # test_base_path = Path(test_base_path_str) # Not directly used now, using str for generator calls
+
+    # 1. Generate base structure (original test)
+    print(f"Generating Cypress structure in: {Path(test_base_path_str).resolve()}")
+    success, _, _ = generator.generate_cypress_structure(test_base_path_str)
+    if not success:
+        print("Failed to create base structure. Aborting further tests.")
+    else:
+        print("\nBase structure generated with class methods.")
+
+        # Test individual creation methods (original tests)
+        print("\nTesting individual file creation methods...")
+        fixture_data = {"name": "John Doe", "email": "john.doe@example.com"}
+        generator.create_fixture_file(test_base_path_str, "exampleUser", fixture_data)
+        
+        custom_command_js = "\nCypress.Commands.add('customLoginOld', (user, pass) => { cy.log('Old login'); });\n"
+        generator.create_support_command(test_base_path_str, "customLoginOld", custom_command_js)
+        
+        helper_content_js = "\nexport const addOld = (a, b) => a + b;\n"
+        generator.create_helper_file(test_base_path_str, "mathUtilsOld", helper_content_js)
+        
+        generator.create_e2e_spec_file(test_base_path_str, 
+                                        "sampleTestOld", 
+                                        "Sample Test Suite Old", 
+                                        "This is an old test for basic functionality.")
+        print(f"\nCheck the directory '{Path(test_base_path_str).resolve()}' for files created by individual methods.")
+
+    print("\n--------------------------------------------------")
+    print("Testing new `initiate_cypress_structure_generation` function:")
+    # Test the new public function
+    custom_test_path = "./generated_for_custom_test"
+    returned_path = initiate_cypress_structure_generation(custom_test_path, test_name="my_custom_test")
+    print(f"Function returned: {returned_path}")
+    print(f"Please check the directory '{Path(custom_test_path).resolve()}' for the 'my_custom_test' structure.")
+    
+    # Test with default test_name
+    default_test_path = "./generated_for_default_test"
+    initiate_cypress_structure_generation(default_test_path) # Uses test_name="example_test"
+    print(f"Please check the directory '{Path(default_test_path).resolve()}' for the 'example_test' structure.")
+    
+    print("\nRemember to manually clean up test directories (e.g., 'test_project_root_populated', 'generated_for_custom_test', 'generated_for_default_test') if needed.")

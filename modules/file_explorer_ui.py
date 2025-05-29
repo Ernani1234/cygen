@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, scrolledtext, simpledialog
 from pathlib import Path
-from modules.structure_generator import StructureGenerator
-from modules.ai_file_api import list_directory_api, read_file_api, create_directory_api # Import specific functions
+# Update import: remove StructureGenerator, add initiate_cypress_structure_generation
+from modules.structure_generator import initiate_cypress_structure_generation 
+from modules.ai_file_api import list_directory_api, read_file_api, create_directory_api
 
 class FileExplorerUI:
     def __init__(self, master):
@@ -105,106 +106,138 @@ class FileExplorerUI:
             print("AI Command input: [EMPTY]")
             return
 
-        self.status_label.config(text=f"Status: AI Command Received: '{command_text[:30]}...'")
+        self.status_label.config(text=f"Status: AI Cmd: '{command_text[:30]}...'") # Changed from "AI Command Received"
         print(f"AI Command input: '{command_text}'")
 
-        # Placeholder for AI parsing and execution
-        # For now, just simulate based on keywords
-        if "create file" in command_text.lower():
-            feedback = "Simulation: Would call `create_file_api` with parsed parameters."
-            # Example: ai_file_api.create_file_api("path/to/file.txt", "content")
-        elif "read file" in command_text.lower():
-            feedback = "Simulation: Would call `read_file_api` with parsed parameters."
-            # Example: ai_file_api.read_file_api("path/to/file.txt")
+        # Keyword-based dispatch (very basic)
+        feedback = f"AI command '{command_text}' received. "
+        processed = False
+        api_result = None # Initialize api_result to avoid NameError
+        
+        # Example: "create directory /path/to/new_dir"
+        if command_text.lower().startswith("create directory "):
+            try:
+                path_to_create = command_text.split(" ", 2)[2]
+                # All AI API calls should ideally operate relative to base_display_path or be absolute
+                # For "create directory", let's make it relative to base_display_path for now
+                api_result = create_directory_api(str(self.base_display_path / path_to_create))
+                feedback += f"Attempted dir creation: {api_result.get('message') or api_result.get('error')}"
+                if api_result["success"]: 
+                    self.refresh_file_explorer_view()
+                processed = True
+            except IndexError:
+                feedback += "Error: Path for 'create directory' not specified correctly."
+            except Exception as e:
+                feedback += f"Error processing 'create directory': {e}"
+            
+            if api_result and not api_result["success"]:
+                 self.status_label.config(text=f"Status: Error - {api_result.get('error', 'Unknown error')}")
+            elif api_result and api_result["success"]:
+                 self.status_label.config(text=f"Status: {api_result.get('message', 'Success')}")
+            else: # if api_result is None or other issues
+                self.status_label.config(text=f"Status: {feedback}")
+
+
+        elif "create file" in command_text.lower(): 
+            feedback += "Simulation: Would call `create_file_api` (needs path & content)."
+            processed = True
+            self.status_label.config(text=f"Status: {feedback}")
+        elif "read file" in command_text.lower(): 
+            feedback += "Simulation: Would call `read_file_api` (needs path)."
+            processed = True
+            self.status_label.config(text=f"Status: {feedback}")
         elif "update file" in command_text.lower():
-            feedback = "Simulation: Would call `update_file_api` with parsed parameters."
+            feedback += "Simulation: Would call `update_file_api` (needs path & content)."
+            processed = True
+            self.status_label.config(text=f"Status: {feedback}")
         elif "delete file" in command_text.lower():
-            feedback = "Simulation: Would call `delete_file_api` with parsed parameters."
-        elif "create directory" in command_text.lower():
-            feedback = "Simulation: Would call `create_directory_api` with parsed parameters."
+            feedback += "Simulation: Would call `delete_file_api` (needs path)."
+            processed = True
+            self.status_label.config(text=f"Status: {feedback}")
         elif "delete directory" in command_text.lower():
-            feedback = "Simulation: Would call `delete_directory_api` with parsed parameters."
-        else:
-            feedback = "Simulation: AI command not recognized by simple keyword matching."
+            feedback += "Simulation: Would call `delete_directory_api` (needs path)."
+            processed = True
+            self.status_label.config(text=f"Status: {feedback}")
+        
+        if not processed: # If no specific keywords matched
+            feedback += "No specific action recognized by keyword parser."
+            self.status_label.config(text=f"Status: {feedback}")
         
         print(feedback)
-        self.status_label.config(text=f"Status: {feedback}")
-        self.ai_command_input.delete(0, tk.END) # Clear the input field
+        self.ai_command_input.delete(0, tk.END)
 
     def handle_generate_structure(self):
         self.status_label.config(text="Status: Generating structure...")
-        generator = StructureGenerator()
-        base_path_str = "./generated_test_structure" 
-        # Ensure base_path itself exists for the generator to build upon
-        Path(base_path_str).mkdir(parents=True, exist_ok=True)
-
-        print(f"Attempting to generate structure in: {Path(base_path_str).resolve()}")
-
-        # 1. Generate base directory structure
-        success, _, errors = generator.generate_cypress_structure(base_path_str)
-        if not success:
-            message = f"Failed to generate base structure. Errors: {errors}"
-            print(message)
-            self.status_label.config(text=f"Status: Error - {message}")
-            return
-
-        # 2. Create a fixture file
-        fixture_content = {"user": "test_user", "password": "password123"}
-        generator.create_fixture_file(base_path_str, "example_fixture", fixture_content)
-
-        # 3. Create an E2E spec file
-        spec_content = "it('should demonstrate a basic test', () => { cy.visit('/'); });"
-        generator.create_e2e_spec_file(base_path_str, "example_spec", "Example Test Suite", spec_content)
-
-        # 4. Create a support command
-        command_content = "// Example custom command\nCypress.Commands.add('login', (username, password) => { /* ... */ });"
-        generator.create_support_command(base_path_str, "example_command", command_content)
         
-        # 5. Create a helper file
-        helper_content = "// Example helper function\nexport function greet(name) { return `Hello, ${name}`;} "
-        generator.create_helper_file(base_path_str, "example_helper", helper_content)
+        # Ensure base_path itself exists
+        self.base_display_path.mkdir(parents=True, exist_ok=True)
         
-        completion_message = f"Structure and sample files generated in '{Path(base_path_str).resolve()}'"
-        print(completion_message)
-        self.status_label.config(text=f"Status: {completion_message}")
-        # For now, we don't auto-refresh the treeview. User would need to restart or manually check.
-        # Future enhancement: self.refresh_treeview(base_path_str)
+        ui_test_name = "ui_generated_test" # Default test name for UI initiated generation
+        print(f"Attempting to generate structure for '{ui_test_name}' in: {self.base_display_path.resolve()}")
 
+        try:
+            # Call the new centralized function from structure_generator module
+            generated_path_str = initiate_cypress_structure_generation(
+                base_output_path=str(self.base_display_path), 
+                test_name=ui_test_name
+            )
+            # The initiate_cypress_structure_generation function prints its own completion message.
+            completion_message = f"Structure for '{ui_test_name}' generated in: {generated_path_str}"
+            print(f"UI: {completion_message}") # Console log from UI
+            self.status_label.config(text=f"Status: {completion_message}")
+        except Exception as e:
+            # Catching potential errors from the generation process
+            error_message = f"Error during structure generation: {e}"
+            print(error_message) # Log detailed error to console
+            self.status_label.config(text=f"Status: Generation Error! Check console.")
 
-    def populate_treeview(self):
-        # Clear existing items (if any)
+        self.refresh_file_explorer_view() # Refresh explorer view to show newly created files
+
+    def refresh_file_explorer_view(self, directory_to_list=None): # This method should exist from previous steps
+        self.status_label.config(text="Status: Refreshing file explorer...")
+        # Clear existing items from the tree
         for i in self.tree.get_children():
             self.tree.delete(i)
-            
-        # Placeholder data representing a file structure
-        file_structure = {
-            "Dir1": {
-                "file1.txt": None,
-                "file2.txt": None,
-                "SubDir1": {
-                    "file3.txt": None
-                }
-            },
-            "Dir2": {
-                "file4.txt": None
-            },
-            "file5.txt": None
-        }
+        
+        current_path = directory_to_list if directory_to_list else self.base_display_path
+        
+        if not Path(current_path).is_dir():
+            self.tree.insert("", "end", text=f"Directory not found: {current_path}", open=False)
+            self.status_label.config(text=f"Status: Error - Directory not found: {current_path}")
+            return
 
-        self.insert_items("", file_structure)
+        result = list_directory_api(str(current_path))
 
-    def insert_items(self, parent_node, structure):
-        for name, content in structure.items():
-            if content is None:  # It's a file
-                self.tree.insert(parent_node, "end", text=name, open=False, values=("file",))
-            else:  # It's a directory
-                node = self.tree.insert(parent_node, "end", text=name, open=False, values=("directory",))
-                self.insert_items(node, content)
+        if result["success"]:
+            if Path(current_path).resolve() != self.base_display_path.resolve():
+                parent_path = Path(current_path).parent
+                self.tree.insert("", "end", text="..", open=False, 
+                                 tags=("directory", "parent_dir"), 
+                                 values=(str(parent_path),))
 
-    def run(self):
-        self.master.mainloop()
+            for item in result["items"]:
+                item_path = item["path"] 
+                if item["type"] == "directory":
+                    node = self.tree.insert("", "end", text=item["name"], open=False, 
+                                            tags=("directory",), values=(item_path,))
+                else: 
+                    self.tree.insert("", "end", text=item["name"], open=False, 
+                                     tags=("file",), values=(item_path,))
+            self.status_label.config(text=f"Status: Explorer refreshed for {current_path}")
+        else:
+            self.tree.insert("", "end", text=f"Error: {result['error']}", open=False)
+            self.status_label.config(text=f"Status: Error listing directory - {result['error']}")
+        
+        self.file_content_text.config(state=tk.NORMAL)
+        self.file_content_text.delete(1.0, tk.END)
+        self.file_content_text.config(state=tk.DISABLED)
+
+    # Removed populate_treeview and insert_items as refresh_file_explorer_view replaces them.
+    # Removed run method as master.mainloop() is called in __main__
 
 if __name__ == '__main__':
     root = tk.Tk()
+    root.geometry("900x600") # Set a larger default window size
     app = FileExplorerUI(root)
-    app.run()
+    # app.run() # master.mainloop() is called by Tkinter internally for the root window
+    root.mainloop()
