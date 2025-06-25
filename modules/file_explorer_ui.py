@@ -94,7 +94,19 @@ class FileExplorerUI:
             else:
                 self.file_content_text.insert(tk.END, "No path associated with this file item.")
         elif "directory" in tags:
-            self.file_content_text.insert(tk.END, f"Selected directory: {item_data['text']}\n\n(Select a file to view its content)")
+            # Check if it's the "go up" directory ("..")
+            if "parent_dir" in tags:
+                parent_dir_path = item_data.get("values")[0]
+                self.refresh_file_explorer_view(directory_to_list=parent_dir_path)
+            else: # It's a normal directory, try to navigate into it
+                directory_path_tuple = item_data.get("values")
+                if directory_path_tuple:
+                    actual_directory_path = directory_path_tuple[0]
+                    self.refresh_file_explorer_view(directory_to_list=actual_directory_path)
+                else:
+                    # Fallback if path is not in values (should ideally not happen)
+                    directory_name = item_data['text']
+                    self.file_content_text.insert(tk.END, f"Cannot navigate to directory: {directory_name}\nPath not available.")
         
         self.file_content_text.config(state=tk.DISABLED)
 
@@ -209,8 +221,10 @@ class FileExplorerUI:
         result = list_directory_api(str(current_path))
 
         if result["success"]:
-            if Path(current_path).resolve() != self.base_display_path.resolve():
-                parent_path = Path(current_path).parent
+            # Display ".." (parent directory) if current_path is not the filesystem root
+            current_resolved_path = Path(current_path).resolve()
+            if current_resolved_path.parent != current_resolved_path: # Checks if it's not the root
+                parent_path = current_resolved_path.parent
                 self.tree.insert("", "end", text="..", open=False, 
                                  tags=("directory", "parent_dir"), 
                                  values=(str(parent_path),))
