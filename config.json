@@ -1,10 +1,28 @@
 {
+  "logs_directory": "logs",
   "theme": "darkly",
-  "api_key": "",
+  "api_keys": {
+    "Chave Principal": {
+      "key": "",
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "model": "gpt-3.5-turbo",
+      "temperature": 0.7,
+      "max_tokens": 2000
+    },
+    "Inovvati": {
+      "key": "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",
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "model": "gpt-3.5-turbo",
+      "temperature": 0.7,
+      "max_tokens": 1000
+    }
+  },
+  "active_api_key": "Inovvati",
+  "api_key": "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",
   "api_url": "https://api.openai.com/v1/chat/completions",
   "model": "gpt-3.5-turbo",
   "temperature": 0.7,
-  "max_tokens": 2000,
+  "max_tokens": 1000,
   "selector_priority": [
     "data-cy",
     "data-testid",
@@ -26,6 +44,22 @@
     "type": true
   },
   "capture_network": true,
+  "context_mode_enabled": false,
+  "auto_save_conversations": true,
+  "max_context_messages": 50,
+  "mindmap_colors": {
+    "background": "#282a36",
+    "node_bg": "#44475a",
+    "node_selected": "#6272a4",
+    "node_border": "#50fa7b",
+    "text": "#f8f8f2",
+    "text_secondary": "#6272a4",
+    "connection": "#8be9fd",
+    "action_click": "#ff79c6",
+    "action_input": "#f1fa8c",
+    "action_navigation": "#bd93f9",
+    "action_wait": "#ffb86c"
+  },
   "usage_stats": {
     "total_tokens": 0,
     "prompt_tokens": 0,
