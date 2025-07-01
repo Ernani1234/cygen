@@ -1,6 +1,6 @@
 {
   "logs_directory": "logs",
-  "theme": "darkly",
+  "theme": "vapor",
   "api_keys": {
     "Chave Principal": {
       "key": "",
@@ -25,20 +25,20 @@
   "max_tokens": 1000,
   "selector_priority": [
     "data-cy",
-    "data-testid",
-    "id",
-    "name",
     "aria-label",
+    "data-testid",
+    "name",
+    "id",
     "class",
     "tag",
     "type"
   ],
   "selector_enabled": {
     "data-cy": true,
-    "data-testid": true,
-    "id": true,
-    "name": true,
     "aria-label": true,
+    "data-testid": true,
+    "name": true,
+    "id": true,
     "class": true,
     "tag": true,
     "type": true
@@ -66,5 +66,15 @@
     "completion_tokens": 0,
     "total_requests": 0,
     "last_request": null
-  }
+  },
+  "default_timeout": 5000,
+  "use_conditional_waits": true,
+  "verify_visibility": true,
+  "network_capture_interval": 500,
+  "font_size": 18,
+  "code_font": "Courier New",
+  "highlight_elements": true,
+  "auto_scroll": true,
+  "capture_screenshots": true,
+  "default_zoom": 1.0
 }
