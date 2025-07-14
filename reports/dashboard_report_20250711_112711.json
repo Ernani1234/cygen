@@ -1,0 +1,127 @@
+{
+  "timestamp": "2025-07-11T11:27:11.142016",
+  "metrics": {
+    "tests_count": 0,
+    "elements_count": 0,
+    "api_tokens": 0,
+    "api_cost": 0.0,
+    "success_rate": 0
+  },
+  "activity": [
+    {
+      "type": "log_created",
+      "filename": "capture_20250711_110227.json",
+      "timestamp": 1752246147.0516334
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250710_090023.json",
+      "timestamp": 1752152423.3887792
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250702_104226.json",
+      "timestamp": 1751467346.5187778
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250701_131034.json",
+      "timestamp": 1751466286.9925942
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250625_074202.json",
+      "timestamp": 1751466286.9920666
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250529_102312.json",
+      "timestamp": 1751465745.8567612
+    },
+    {
+      "type": "log_created",
+      "filename": "SGPMMS_20250523_124931.json",
+      "timestamp": 1748018971.2427537
+    },
+    {
+      "type": "log_created",
+      "filename": "SGPMMS_20250523_124341.json",
+      "timestamp": 1748018621.6315835
+    },
+    {
+      "type": "log_created",
+      "filename": "SGPMMS_20250523_121648.json",
+      "timestamp": 1748017008.3553758
+    },
+    {
+      "type": "log_created",
+      "filename": "Discord_20250523_121035.json",
+      "timestamp": 1748016635.4079762
+    },
+    {
+      "type": "log_created",
+      "filename": "SGPMMS_20250523_120255.json",
+      "timestamp": 1748016175.1500678
+    },
+    {
+      "type": "log_created",
+      "filename": "SGPMMS_20250523_105334.json",
+      "timestamp": 1748012014.6277435
+    },
+    {
+      "type": "log_created",
+      "filename": "SGPMMS_20250523_100847.json",
+      "timestamp": 1748009327.7137601
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250523_091322.json",
+      "timestamp": 1748006002.2613425
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250523_091316.json",
+      "timestamp": 1748005996.5582201
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250523_091307.json",
+      "timestamp": 1748005987.9736042
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250523_090924.json",
+      "timestamp": 1748005764.6598792
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250523_090910.json",
+      "timestamp": 1748005750.0644877
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250523_090909.json",
+      "timestamp": 1748005749.913398
+    },
+    {
+      "type": "log_created",
+      "filename": "capture_20250523_090848.json",
+      "timestamp": 1748005728.4201682
+    },
+    {
+      "type": "log_created",
+      "filename": "teste de login_20250522_104849.json",
+      "timestamp": 1747925400.2877946
+    },
+    {
+      "type": "log_created",
+      "filename": "teste de login_20250522_103824.json",
+      "timestamp": 1747924781.7170453
+    },
+    {
+      "type": "log_created",
+      "filename": "teste de login_20250522_100806.json",
+      "timestamp": 1747922938.213403
+    }
+  ]
+}

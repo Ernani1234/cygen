@@ -1,6 +1,6 @@
 {
   "logs_directory": "logs",
-  "theme": "vapor",
+  "theme": "darkly",
   "api_keys": {
     "Chave Principal": {
       "key": "",
@@ -76,5 +76,11 @@
   "highlight_elements": true,
   "auto_scroll": true,
   "capture_screenshots": true,
-  "default_zoom": 1.0
+  "default_zoom": 1.0,
+  "dashboard": {
+    "auto_refresh": true,
+    "refresh_interval": 30,
+    "show_animations": true,
+    "theme": "dark"
+  }
 }
