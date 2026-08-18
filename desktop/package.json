@@ -1,0 +1,33 @@
+{
+  "name": "cygen",
+  "version": "3.0.0",
+  "description": "Grava jornadas no navegador e escreve testes Cypress que se verificam sozinhos",
+  "main": "main.js",
+  "author": "Cygen",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --publish never",
+    "dist:win": "electron-builder --win --publish never",
+    "dist:mac": "electron-builder --mac --publish never",
+    "dist:linux": "electron-builder --linux --publish never"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "app.cygen.desktop",
+    "productName": "Cygen",
+    "directories": { "output": "../dist" },
+    "files": ["main.js", "package.json"],
+    "extraResources": [
+      { "from": "../server", "to": "server", "filter": ["**/*", "!**/__pycache__/**"] },
+      { "from": "../ui", "to": "ui" }
+    ],
+    "win": { "target": ["nsis"] },
+    "mac": { "target": ["dmg"], "category": "public.app-category.developer-tools" },
+    "linux": { "target": ["AppImage"], "category": "Development" }
+  }
+}

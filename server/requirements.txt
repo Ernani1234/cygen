@@ -1,0 +1,11 @@
+# Backend do Cygen.
+#
+# Compare com a v2, que precisava de selenium + ttkbootstrap + Pillow +
+# beautifulsoup4 + tiktoken, mais um chromedriver.exe versionado no repositório.
+# O Playwright baixa o próprio navegador sob demanda.
+
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pydantic>=2.6
+httpx>=0.27
+playwright>=1.44

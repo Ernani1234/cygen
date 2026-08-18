@@ -1,9 +1,42 @@
+# Python
 __pycache__/
-*.pyc
-*.log
-.env
-*.exe
-*.dll
-build/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Node / Electron
+node_modules/
 dist/
-*.txt
+out/
+npm-debug.log*
+
+# Navegadores baixados pelo Playwright (ficam no cache do usuario, mas
+# por seguranca caso alguem aponte o cache para o projeto)
+.playwright/
+ms-playwright/
+
+# Dados locais do Cygen: fluxos gravados e projetos gerados vivem em
+# Documentos\Cygen e no AppData, nunca aqui. Se alguem apontar
+# CYGEN_DATA_DIR para dentro do repositorio, isto evita commitar gravacoes
+# que podem conter dados de producao.
+data/
+flows/
+exports/
+projetos/
+
+# Credenciais. O `cypress.env.json` guarda senhas reais dos projetos
+# gerados; ele nunca deve sair da maquina.
+.env
+*.env.local
+cypress.env.json
+
+# Artefatos de execucao do Cypress
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini

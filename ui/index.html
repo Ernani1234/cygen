@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cygen</title>
+  <link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+
+<!-- Biblioteca de ícones: definida uma vez, referenciada com <use>. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="i-studio"><path d="M3 3h7v7H3zM14 3h7v4h-7zM14 10h7v11h-7zM3 13h7v8H3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+    <g id="i-rec"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></g>
+    <g id="i-flows"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></g>
+    <g id="i-code"><path d="M9 18l-6-6 6-6M15 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-oracle"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3.5 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></g>
+    <g id="i-rules"><path d="M6 3h9l5 5v13H6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v6h6M9 13h7M9 17h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></g>
+    <g id="i-cog"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v3M12 19v3M22 12h-3M5 12H2M18.4 5.6l-2 2M7.6 16.4l-2 2M18.4 18.4l-2-2M7.6 7.6l-2-2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></g>
+    <g id="i-check"><path d="M4 12l5.5 5.5L20 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-x"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></g>
+    <g id="i-play"><path d="M7 4l13 8-13 8z" fill="currentColor"/></g>
+    <g id="i-stop"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor"/></g>
+    <g id="i-pause"><rect x="7" y="5" width="3.6" height="14" rx="1.4" fill="currentColor"/><rect x="13.4" y="5" width="3.6" height="14" rx="1.4" fill="currentColor"/></g>
+    <g id="i-bolt"><path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+    <g id="i-info"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></g>
+    <g id="i-warn"><path d="M12 3l9.5 17H2.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></g>
+    <g id="i-copy"><rect x="8" y="8" width="12" height="12" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.7"/></g>
+    <g id="i-save"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 3v6h7M8 14h8v7H8z" fill="none" stroke="currentColor" stroke-width="1.7"/></g>
+    <g id="i-target"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></g>
+    <g id="i-heal"><path d="M12 21s-8-4.8-8-10.4A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8 3.6C20 16.2 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+    <g id="i-sun"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2.4M12 19.6V22M22 12h-2.4M4.4 12H2M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7M18.4 18.4l-1.7-1.7M7.3 7.3L5.6 5.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></g>
+    <g id="i-moon"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+    <g id="i-mouse"><path d="M5 3l14 7-6 2-2 6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+    <g id="i-type"><path d="M4 7V5h16v2M12 5v14M9 19h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></g>
+    <g id="i-nav"><path d="M3 12h13M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-list"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+    <g id="i-trash"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-sparkle"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+    <g id="i-package"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+    <g id="i-folder"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+    <g id="i-chevron"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </defs>
+</svg>
+
+<div class="app">
+
+  <!-- ================= Navegação ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3a9 9 0 1 0 9 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">Cygen</div>
+        <div class="brand-ver">v3 · Oracle</div>
+      </div>
+    </div>
+
+    <div class="nav-label">Trabalho</div>
+    <button class="nav-item active" data-view="studio">
+      <svg viewBox="0 0 24 24"><use href="#i-studio"/></svg><span>Estúdio</span>
+    </button>
+    <button class="nav-item" data-view="record">
+      <svg viewBox="0 0 24 24"><use href="#i-rec"/></svg><span>Gravar</span>
+      <span class="nav-badge live" id="navRec" hidden>REC</span>
+    </button>
+    <button class="nav-item" data-view="flows">
+      <svg viewBox="0 0 24 24"><use href="#i-flows"/></svg><span>Fluxos</span>
+      <span class="nav-badge" id="navFlows">0</span>
+    </button>
+    <button class="nav-item" data-view="code">
+      <svg viewBox="0 0 24 24"><use href="#i-code"/></svg><span>Código</span>
+    </button>
+
+    <div class="nav-label">Conhecimento</div>
+    <button class="nav-item" data-view="oracle">
+      <svg viewBox="0 0 24 24"><use href="#i-oracle"/></svg><span>Oracle</span>
+    </button>
+    <button class="nav-item" data-view="rules">
+      <svg viewBox="0 0 24 24"><use href="#i-rules"/></svg><span>Assistente</span>
+    </button>
+    <button class="nav-item" data-view="settings">
+      <svg viewBox="0 0 24 24"><use href="#i-cog"/></svg><span>Configurações</span>
+    </button>
+
+    <div class="sidebar-foot">
+      <button class="btn ghost sm" id="paletteHint" style="width:100%;justify-content:space-between">
+        <span>Buscar</span><kbd>Ctrl K</kbd>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ================= Conteúdo ================= -->
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="topTitle">Estúdio</h1>
+        <div class="topbar-sub" id="topSub">Grave um fluxo e deixe o Oracle deduzir as verificações</div>
+      </div>
+      <div class="topbar-actions">
+        <span class="chip" id="recChip" hidden><span class="rec-dot"></span><span id="recTime">00:00</span></span>
+        <button class="btn icon ghost" id="themeBtn" title="Alternar tema" aria-label="Alternar tema">
+          <svg viewBox="0 0 24 24"><use href="#i-moon" id="themeIcon"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ---------- Estúdio ---------- -->
+    <section class="view" id="view-studio">
+      <div class="view-head">
+        <h2>Bem-vindo ao Cygen</h2>
+        <p>Grave o que você faz no navegador. O Cygen entende a intenção por trás dos cliques,
+           deduz as verificações a partir do que a aplicação realmente fez e escreve o teste —
+           depois roda o teste para provar que ele funciona.</p>
+      </div>
+
+      <div class="grid c4 stagger" id="stats"></div>
+
+      <div class="grid c2 mt-lg" style="align-items:start">
+        <div class="card">
+          <div class="card-title">Começar agora</div>
+          <div class="field">
+            <label for="quickUrl">Endereço da aplicação</label>
+            <input class="input" id="quickUrl" type="url" placeholder="https://sua-aplicacao.com.br"
+                   autocomplete="off" spellcheck="false">
+            <span class="hint">Uma janela do Chromium abre para você navegar normalmente.</span>
+          </div>
+          <div class="row mt">
+            <button class="btn primary" id="quickStart">
+              <svg viewBox="0 0 24 24"><use href="#i-rec"/></svg> Iniciar gravação
+            </button>
+            <button class="btn ghost" data-goto="flows">Ver fluxos salvos</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">O que mudou nesta versão</div>
+          <div class="col small" id="changes"></div>
+        </div>
+      </div>
+
+      <div class="mt-lg">
+        <div class="row between" style="margin-bottom:12px">
+          <div class="card-title" style="margin:0">Fluxos recentes</div>
+          <button class="btn ghost sm" data-goto="flows">Ver todos</button>
+        </div>
+        <div class="grid c3 stagger" id="recentFlows"></div>
+      </div>
+    </section>
+
+    <!-- ---------- Gravar ---------- -->
+    <section class="view" id="view-record" hidden>
+      <div class="view-head">
+        <h2>Gravação</h2>
+        <p>Navegue como um usuário faria. Cada passo aparece aqui no instante em que acontece,
+           já com a evidência que o Oracle vai usar.</p>
+      </div>
+
+      <div class="card" id="recStartCard">
+        <div class="row wrap" style="align-items:flex-end;gap:14px">
+          <div class="field grow" style="min-width:260px">
+            <label for="recUrl">Endereço inicial</label>
+            <input class="input" id="recUrl" type="url" placeholder="https://sua-aplicacao.com.br"
+                   autocomplete="off" spellcheck="false">
+          </div>
+          <div class="field" style="width:150px">
+            <label for="recBrowser">Navegador</label>
+            <select class="input" id="recBrowser">
+              <option value="chromium">Chromium</option>
+              <option value="firefox">Firefox</option>
+              <option value="webkit">WebKit</option>
+            </select>
+          </div>
+          <button class="btn primary" id="recStart">
+            <svg viewBox="0 0 24 24"><use href="#i-play"/></svg> Gravar
+          </button>
+        </div>
+      </div>
+
+      <div id="recLive" hidden>
+        <div class="row wrap mt" style="gap:9px">
+          <button class="btn danger" id="recStop">
+            <svg viewBox="0 0 24 24"><use href="#i-stop"/></svg> Parar e analisar
+          </button>
+          <button class="btn" id="recPause">
+            <svg viewBox="0 0 24 24"><use href="#i-pause"/></svg> Pausar
+          </button>
+          <button class="btn" id="recPick" title="Clique num elemento da página para criar uma verificação">
+            <svg viewBox="0 0 24 24"><use href="#i-target"/></svg> Apontar elemento
+          </button>
+          <span class="grow"></span>
+          <span class="chip accent" id="recCount">0 passos</span>
+        </div>
+
+        <div class="grid c2 mt" style="align-items:start">
+          <div class="preview">
+            <div class="preview-bar">
+              <div class="preview-lights">
+                <i style="background:var(--rose-300)"></i>
+                <i style="background:var(--butter-300)"></i>
+                <i style="background:var(--mint-300)"></i>
+              </div>
+              <div class="preview-url" id="recUrlNow">sobre:em-branco</div>
+            </div>
+            <div class="preview-frame" id="recFrame">
+              <div class="muted small">aguardando o primeiro quadro…</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card-title">Passos capturados</div>
+            <div class="timeline" id="recTimeline"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- Fluxos ---------- -->
+    <section class="view" id="view-flows" hidden>
+      <div class="view-head">
+        <h2>Fluxos</h2>
+        <p>Tudo que você já gravou. Abra um fluxo para revisar os passos, ajustar as
+           verificações sugeridas e gerar o código.</p>
+      </div>
+      <div class="grid c3 stagger" id="flowList"></div>
+    </section>
+
+    <!-- ---------- Código ---------- -->
+    <section class="view" id="view-code" hidden>
+      <div class="view-head">
+        <h2 id="codeTitle">Código gerado</h2>
+        <p id="codeSub">Revise os passos e as verificações à esquerda; o código à direita
+           se atualiza conforme você decide o que entra.</p>
+      </div>
+
+      <div id="codeEmpty" class="empty">
+        <div class="empty-art"><svg viewBox="0 0 24 24"><use href="#i-code"/></svg></div>
+        <h3>Nenhum fluxo aberto</h3>
+        <p>Grave um fluxo ou abra um dos salvos para ver o teste que o Cygen escreve a partir dele.</p>
+        <button class="btn primary" data-goto="record">
+          <svg viewBox="0 0 24 24"><use href="#i-rec"/></svg> Gravar um fluxo
+        </button>
+      </div>
+
+      <div id="codeWork" hidden>
+        <div class="card" style="margin-bottom:16px">
+          <div class="row wrap" style="align-items:flex-end;gap:14px">
+            <div class="field grow" style="min-width:220px">
+              <label for="specName">Nome do teste</label>
+              <input class="input" id="specName" placeholder="Login e acesso ao painel">
+            </div>
+            <div class="field grow" style="min-width:220px">
+              <label for="specDesc">O que ele valida</label>
+              <input class="input" id="specDesc" placeholder="valida a autenticação e a carga inicial">
+            </div>
+            <div class="field" style="min-width:200px">
+              <label for="specBase">URL base</label>
+              <input class="input" id="specBase" placeholder="https://qa.exemplo.com">
+            </div>
+          </div>
+          <div class="row wrap mt" style="gap:9px">
+            <button class="btn primary" id="btnGenerate">
+              <svg viewBox="0 0 24 24"><use href="#i-bolt"/></svg> Gerar código
+            </button>
+            <button class="btn ok" id="btnVerify" title="Roda o teste de verdade e conserta seletores quebrados">
+              <svg viewBox="0 0 24 24"><use href="#i-heal"/></svg> Verificar e curar
+            </button>
+            <span class="grow"></span>
+            <label class="switch">
+              <input type="checkbox" id="optVerbose" checked>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span class="small muted">Comentários explicativos</span>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="optSplit">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span class="small muted">Um it() por bloco</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="genWarnings"></div>
+        <div id="verifyReport"></div>
+
+        <!-- As ações vêm antes do conteúdo longo. Com um fluxo de trinta
+             passos, deixá-las embaixo obrigava a rolar a página inteira para
+             gerar o projeto. -->
+        <div class="row wrap" style="gap:9px;margin-bottom:14px">
+          <button class="btn primary" id="btnScaffold"
+                  title="Cria um projeto Cypress que roda com npm install && npm test">
+            <svg viewBox="0 0 24 24"><use href="#i-package"/></svg> Gerar projeto completo
+          </button>
+          <button class="btn" id="btnCopy"><svg viewBox="0 0 24 24"><use href="#i-copy"/></svg> Copiar</button>
+          <button class="btn" id="btnSave"><svg viewBox="0 0 24 24"><use href="#i-save"/></svg> Salvar só o spec</button>
+          <span class="grow"></span>
+          <button class="btn ghost" id="btnAsk"><svg viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> Pedir revisão à IA</button>
+        </div>
+
+        <div id="scaffoldResult"></div>
+
+        <div class="panel mt" id="stepsPanel">
+          <button class="panel-head" id="stepsToggle" aria-expanded="false"
+                  aria-controls="stepsBody">
+            <svg class="panel-chevron" viewBox="0 0 24 24"><use href="#i-chevron"/></svg>
+            <span class="panel-title">Passos e verificações</span>
+            <span class="chip" id="stepSummary">—</span>
+            <span class="grow"></span>
+            <span class="small faint" id="stepsHint">mostrar</span>
+          </button>
+          <div class="panel-body" id="stepsBody">
+            <div>
+              <div class="timeline panel-scroll" id="stepList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-shell mt" style="max-height:66vh">
+          <div class="code-tabs" id="codeTabs"></div>
+          <pre class="code-body"><code id="codeOut">// Clique em “Gerar código”.</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- Oracle ---------- -->
+    <section class="view" id="view-oracle" hidden>
+      <div class="view-head">
+        <h2>Oracle</h2>
+        <p>A inteligência nativa do Cygen. Não é um modelo de linguagem: é um conjunto de regras
+           explícitas que olham para o que a aplicação fez e deduzem qual verificação descreve
+           aquilo. Sem chave de API, sem custo, sem latência — e sem inventar nada, porque cada
+           sugestão aponta para a evidência que a originou.</p>
+      </div>
+
+      <div class="grid c3 stagger" id="oracleStats"></div>
+
+      <div class="mt-lg">
+        <div class="card-title">Regras ativas</div>
+        <div class="grid c2 stagger" id="ruleList"></div>
+      </div>
+
+      <div class="mt-lg">
+        <div class="row between" style="margin-bottom:12px">
+          <div class="card-title" style="margin:0">Catálogo de verificações</div>
+          <input class="input" id="assertSearch" placeholder="buscar…" style="width:220px">
+        </div>
+        <div class="grid c2" id="assertList"></div>
+      </div>
+    </section>
+
+    <!-- ---------- Assistente ---------- -->
+    <section class="view" id="view-rules" hidden>
+      <div class="view-head">
+        <h2>Assistente</h2>
+        <p>Converse com o provedor de IA configurado para revisar um teste, entender uma
+           regra de negócio ou transformar documentação em critérios verificáveis.</p>
+      </div>
+
+      <div class="card">
+        <div class="row wrap" style="gap:12px;align-items:flex-end">
+          <div class="field" style="min-width:200px">
+            <label for="chatProvider">Provedor</label>
+            <select class="input" id="chatProvider"></select>
+          </div>
+          <div class="field grow" style="min-width:200px">
+            <label for="chatModel">Modelo</label>
+            <select class="input" id="chatModel"></select>
+          </div>
+          <div class="field" style="min-width:170px">
+            <label for="chatMode">Modo</label>
+            <select class="input" id="chatMode">
+              <option value="review">Revisar teste</option>
+              <option value="rules">Extrair regras</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="col mt" id="chatLog"></div>
+
+      <div class="card mt">
+        <div class="field">
+          <textarea class="input" id="chatInput" rows="3"
+            placeholder="Ex.: este teste depende de dados que só existem em homologação. Como deixá-lo independente?"></textarea>
+        </div>
+        <div class="row mt">
+          <button class="btn primary" id="chatSend">Enviar</button>
+          <span class="small faint" id="chatCost"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- Configurações ---------- -->
+    <section class="view" id="view-settings" hidden>
+      <div class="view-head">
+        <h2>Configurações</h2>
+        <p>Preferências ficam nesta máquina. Chaves de API nunca são gravadas em arquivo —
+           o Cygen lê apenas variáveis de ambiente.</p>
+      </div>
+
+      <div class="grid c2" style="align-items:start">
+        <div class="card">
+          <div class="card-title">Geração</div>
+          <div class="col">
+            <label class="switch">
+              <input type="checkbox" id="setCypress" checked>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span>Emitir Cypress</span>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="setPlaywright">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span>Emitir Playwright também</span>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="setAutoVerify" checked>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span>Verificar automaticamente após gerar</span>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="setHeadless">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span>Gravar com o navegador oculto</span>
+            </label>
+          </div>
+
+          <div class="field mt">
+            <label for="setConfidence">Confiança mínima das sugestões</label>
+            <input type="range" id="setConfidence" min="0.3" max="0.9" step="0.05" value="0.55" style="width:100%">
+            <span class="hint" id="confLabel">0.55 — sugestões abaixo disso não aparecem</span>
+          </div>
+
+          <div class="field mt">
+            <label for="setAttrs">Atributos de teste do seu projeto</label>
+            <input class="input" id="setAttrs" placeholder="data-cy, data-testid">
+            <span class="hint">Em ordem de preferência. O motor de seletores prioriza estes.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Provedores de IA</div>
+          <p class="small muted" style="margin-top:0">
+            Defina a variável de ambiente do provedor que quiser usar e reinicie o Cygen.
+            O modo nativo (Oracle) funciona sempre, sem configurar nada.
+          </p>
+          <div class="col mt" id="providerList"></div>
+        </div>
+      </div>
+
+      <div class="card mt">
+        <div class="card-title">Diagnóstico</div>
+        <div class="row wrap" id="healthRow">
+          <button class="btn" id="btnHealth">Verificar ambiente</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Paleta de comandos -->
+<div class="palette-backdrop" id="palette" hidden>
+  <div class="palette">
+    <input class="palette-input" id="paletteInput" placeholder="O que você quer fazer?" autocomplete="off">
+    <div class="palette-list" id="paletteList"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script src="/assets/js/app.js"></script>
+</body>
+</html>

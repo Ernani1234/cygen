@@ -1,1 +1,21 @@
-*.py filter=lfs diff=lfs merge=lfs -text
+# Nesta branch os arquivos .py NAO passam por Git LFS.
+#
+# A branch `main` os rastreia com `*.py filter=lfs`, o que provavelmente foi
+# um engano: LFS existe para binarios grandes, e a consequencia e que o codigo
+# Python da v2 aparece no GitHub como ponteiro em vez de fonte legivel, exige
+# git-lfs instalado em qualquer clone e consome cota de LFS com texto.
+#
+# Codigo-fonte fica como texto normal.
+*.py text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+
+# Arquivos de lote precisam de CRLF: o cmd.exe do Windows pode falhar ao
+# interpretar um .bat com terminacoes LF.
+*.bat text eol=crlf
+
+# Deteccao automatica para o resto.
+* text=auto
