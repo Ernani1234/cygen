@@ -7,6 +7,115 @@ Reimaginação do CypressGen Pro v2. A ideia original continua: gravar a jornada
 inferir a intenção, gerar o teste, refinar com IA. O que mudou foi tudo abaixo
 disso.
 
+> Esta é a branch **`v3`**. A `main` guarda a v2 original, em Python/Tkinter —
+> outro projeto, outra stack.
+
+---
+
+## Instalar numa máquina nova
+
+### 1. Pré-requisitos
+
+| | Versão | Precisa mesmo? |
+|---|---|---|
+| **Python** | 3.10 ou superior | Sim. É o backend inteiro |
+| **Node.js** | 18 ou superior | Só para a janela de desktop e para rodar o Cypress. Sem ele o Cygen abre no navegador e funciona igual |
+| **Git** | qualquer | Para clonar |
+
+Ao instalar o Python no Windows, marque **"Add Python to PATH"**. Sem isso o
+inicializador não o encontra.
+
+Você **não precisa** de Git LFS. A `main` rastreia os `.py` com LFS, mas esta
+branch não — o código aqui é texto normal.
+
+### 2. Clonar
+
+```powershell
+git clone -b v3 https://github.com/Ernani1234/cygen.git
+cd cygen
+```
+
+O `-b v3` traz a branch certa já no checkout. Se você clonar sem ele, cai na
+`main` (a v2) e precisa de `git checkout v3`.
+
+### 3. Rodar
+
+```powershell
+.\Cygen.bat
+```
+
+É só isso. O inicializador verifica o ambiente, instala o que faltar e abre o
+aplicativo:
+
+```
+  Cygen
+  ---------------------------------------------------------------
+
+  [ok] Python 3.12.10
+  [..] Instalando dependencias Python. Demora um pouco na primeira vez.
+  [..] Baixando o Chromium do Playwright (cerca de 150 MB, so desta vez)
+  [..] Instalando o Electron (cerca de 200 MB, so desta vez)
+
+  Iniciando o Cygen...
+```
+
+A primeira execução baixa cerca de 400 MB e leva de 3 a 8 minutos conforme a
+conexão. As seguintes abrem em segundos.
+
+Modos alternativos:
+
+```powershell
+.\Cygen.bat web      # sem Electron: abre no seu navegador
+.\Cygen.bat setup    # só instala e sai, sem abrir nada
+```
+
+### 4. Conferir se deu certo
+
+Abra **Configurações → Verificar ambiente**. Deve mostrar o navegador pronto e
+a contagem de provedores. Se o Chromium aparecer indisponível, rode
+`.\Cygen.bat setup` de novo.
+
+### macOS e Linux
+
+O `.bat` é do Windows. Nesses sistemas, três comandos:
+
+```bash
+cd server
+pip install -r requirements.txt
+python -m playwright install chromium
+python -m cygen           # abre em http://127.0.0.1:8756
+```
+
+Para a janela de desktop:
+
+```bash
+cd desktop && npm install && npm start
+```
+
+### O que não vem no clone
+
+O repositório traz só o código. Ficam de fora, por design:
+
+| | Onde vive | Por quê |
+|---|---|---|
+| Fluxos gravados | `%LOCALAPPDATA%\Cygen` (Win) · `~/.local/share/cygen` | São seus dados, e podem conter informação de produção |
+| Projetos gerados | `Documentos\Cygen` | Artefato seu, para abrir no editor e versionar à parte |
+| Chaves de IA | variáveis de ambiente | Nunca são gravadas em arquivo |
+| `node_modules` | ignorado pelo git | 558 MB; o `Cygen.bat` reinstala |
+
+Então numa máquina nova você começa sem fluxos. Isso é intencional.
+
+### Se algo der errado
+
+| Mensagem | Causa | Solução |
+|---|---|---|
+| `npm : O arquivo npm.ps1 não pode ser carregado` | O PowerShell bloqueia scripts `.ps1`, e o `npm` do Windows é um | Rode pelo `.bat`, que usa `cmd`. Direto no terminal, use `npm.cmd` |
+| `npm start` roda mas nenhuma janela abre | `ELECTRON_RUN_AS_NODE` definida no ambiente faz o Electron virar Node puro | `Remove-Item Env:ELECTRON_RUN_AS_NODE` — o `Cygen.bat` já limpa sozinho |
+| `bad option: --smoke-test` ao rodar o Cypress | A mesma variável. O Cypress também é um app Electron | Idem acima |
+| `Python nao encontrado` | Não está no PATH | Reinstale marcando "Add Python to PATH", ou aponte: `set CYGEN_PYTHON=C:\caminho\python.exe` |
+| `A pasta atual não é válida` ao rodar um projeto | O Python da Microsoft Store virtualiza `AppData\Local`, e o `node` não enxerga a pasta | Já resolvido: os projetos vão para `Documentos\Cygen`. Se persistir, gere o projeto de novo |
+| `token '&&' não é um separador válido` | PowerShell 5.1 não aceita `&&` | Um comando por linha |
+
 ---
 
 ## Por que a v2 gerava testes que quebravam
@@ -174,109 +283,18 @@ não deu.
 
 ---
 
-## Início rápido (Windows)
-
-Dê um clique duplo em **`Cygen.bat`**. Ele verifica o ambiente, instala o que
-faltar e abre o aplicativo.
-
-```
-Cygen.bat          aplicativo de desktop
-Cygen.bat web      só o backend, abre no navegador
-Cygen.bat setup    instala as dependências e sai
-```
-
-Rodar por um `.bat` evita dois obstáculos do PowerShell de uma vez: a política
-de execução que bloqueia `npm.ps1`, e o operador `&&` que a versão 5.1 não
-reconhece. O script também limpa `ELECTRON_RUN_AS_NODE`, que faz o Electron
-abrir como Node puro e falhar sem explicar o motivo.
-
-O restante desta seção é para quem prefere rodar na mão.
-
----
-
-## Instalação manual
-
-Um comando por linha. **No PowerShell não use `&&`** — a versão 5.1, padrão do
-Windows, não reconhece esse operador e responde
-`O token '&&' não é um separador de instruções válido`.
+## Empacotar como instalador
 
 ```powershell
-cd cygen-next\server
-pip install -r requirements.txt
-python -m playwright install chromium
-
-cd ..\desktop
-npm install
+cd desktop
+npm.cmd run dist:win
 ```
 
-O `requirements.txt` fica em `server\`, não na raiz do projeto.
+Gera o instalador em `dist\`. Para outras plataformas: `dist:mac`, `dist:linux`.
 
-### Rodar
-
-Como aplicativo de desktop (o Electron sobe o backend sozinho):
-
-```powershell
-cd cygen-next\desktop
-npm start
-```
-
-Ou só o backend, abrindo a interface no navegador:
-
-```powershell
-cd cygen-next\server
-python -m cygen
-```
-
-Ele imprime o endereço — normalmente <http://127.0.0.1:8756>. Se a porta
-estiver ocupada, escolhe outra livre e mostra qual.
-
-### Empacotar
-
-```powershell
-cd cygen-next\desktop
-npm run dist:win
-```
-
-Gera o instalador em `cygen-next\dist\`. Para outras plataformas:
-`npm run dist:mac` ou `npm run dist:linux`.
-
-### Problemas comuns no Windows
-
-**`npm : O arquivo npm.ps1 não pode ser carregado porque a execução de scripts
-foi desabilitada`**
-
-O PowerShell bloqueia scripts `.ps1` por padrão, e o `npm` do Windows é um
-wrapper `.ps1`. Use `npm.cmd`, que é um arquivo de lote e não passa por essa
-política:
-
-```powershell
-npm.cmd install
-npm.cmd start
-```
-
-Se preferir resolver de vez para o seu usuário (não afeta a máquina toda):
-
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-```
-
-**`npm start` roda mas nenhuma janela abre**
-
-A variável `ELECTRON_RUN_AS_NODE` faz o Electron rodar como Node puro. Alguns
-terminais e ferramentas de desenvolvimento a deixam definida sem avisar:
-
-```powershell
-Remove-Item Env:ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
-npm.cmd start
-```
-
-**Nada disso resolveu**
-
-Chame o Electron direto, pulando o npm inteiro:
-
-```powershell
-.\node_modules\.bin\electron.cmd .
-```
+O empacotamento inclui o backend Python como recurso, mas **não** inclui um
+interpretador. A máquina de destino precisa ter Python 3.10+ instalado — o
+`main.js` procura por `py -3`, `python` e `python3`, nessa ordem.
 
 ---
 
@@ -308,17 +326,20 @@ mandava `temperature: 0.7` para todo mundo, quebraria contra eles.
 ## Estrutura
 
 ```
-cygen-next/
-├── server/cygen/
-│   ├── recorder/        engine.py (Playwright) + injector.js (na página)
-│   ├── intel/           oracle.py, selectors.py, intent.py, catalog.py
-│   ├── emit/            ir.py, build.py, cypress.py, playwright_ts.py
-│   ├── ai/              registry.py (23 provedores), client.py
-│   ├── verify/          healer.py (executa e cura)
-│   ├── app.py           FastAPI + WebSocket
-│   └── store.py         persistência
-├── ui/                  HTML/CSS/JS puro, sem build
-└── desktop/             shell Electron
+Cygen.bat                inicializador (Windows)
+server/
+  requirements.txt
+  cygen/
+    recorder/            engine.py (Playwright) + injector.js (na página)
+    intel/               oracle.py, review.py, selectors.py, intent.py
+    emit/                ir.py, build.py, cypress.py, playwright_ts.py,
+                         scaffold.py (monta o projeto completo)
+    ai/                  registry.py (23 provedores), client.py
+    verify/              healer.py (executa e cura), runner.py (roda o projeto)
+    app.py               FastAPI + WebSocket
+    store.py             persistência
+ui/                      HTML/CSS/JS puro, sem build step
+desktop/                 shell Electron
 ```
 
 ---
