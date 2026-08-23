@@ -108,3 +108,62 @@ class Spec:
             "intercepts": sum(1 for c in self.commands if c.op == "intercept"),
             "groups": len(self.groups),
         }
+
+
+@dataclass
+class Suite:
+    """Vários fluxos num arquivo só, cada um virando um `it()`.
+
+    Existe porque uma jornada real raramente cabe numa gravação: cadastrar,
+    aprovar e depois consultar são três fluxos que só fazem sentido em
+    sequência, e na ordem certa. Reunidos aqui, viram um único `.cy.js` que o
+    Cypress roda de cima para baixo.
+
+    A ordem de `specs` é a ordem de execução, e não é decorativa — ver
+    `emit_cypress.emit_suite` sobre isolamento entre testes.
+    """
+
+    name: str
+    description: str = ""
+    base_url: str = ""
+    specs: list[Spec] = field(default_factory=list)
+    # Quando ligado, cada teste começa com cookies e armazenamento limpos. É o
+    # padrão do Cypress e o certo para testes independentes — mas é justamente
+    # o que impede uma sequência de continuar de onde a anterior parou.
+    isolate: bool = False
+
+    @property
+    def env_keys(self) -> list[str]:
+        """União das credenciais pedidas pelos fluxos, sem repetir."""
+        out: list[str] = []
+        for spec in self.specs:
+            for key in spec.env_keys:
+                if key not in out:
+                    out.append(key)
+        return out
+
+    @property
+    def warnings(self) -> list[str]:
+        """Avisos de todos os fluxos, cada um dizendo de onde veio."""
+        out: list[str] = []
+        for spec in self.specs:
+            for warning in spec.warnings:
+                marked = f"{spec.name}: {warning}"
+                if marked not in out:
+                    out.append(marked)
+        return out
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "name": self.name, "description": self.description,
+            "baseUrl": self.base_url, "isolate": self.isolate,
+            "specs": [s.to_dict() for s in self.specs],
+            "envKeys": self.env_keys, "warnings": self.warnings,
+        }
+
+    def stats(self) -> dict[str, int]:
+        return {
+            "tests": len(self.specs),
+            "commands": sum(len(s.commands) for s in self.specs),
+            "checks": sum(len(c.checks) for s in self.specs for c in s.commands),
+        }

@@ -111,6 +111,16 @@ class RecordingSession:
 
     # -- ciclo de vida ------------------------------------------------------
 
+    @property
+    def page(self):
+        """A página em uso, para quem precisa dirigi-la de fora.
+
+        O auto-teste age nesta mesma página: os cliques dele são eventos de DOM
+        reais, capturados pelo injetor como qualquer outro. É o que permite a
+        exploração automática reaproveitar o pipeline inteiro da gravação.
+        """
+        return self._page
+
     async def start(self, url: str) -> dict[str, Any]:
         """Abre o navegador, instala o gravador e navega para a URL."""
         from playwright.async_api import async_playwright

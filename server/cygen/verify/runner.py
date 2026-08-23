@@ -333,12 +333,35 @@ def _parse_output(raw: str) -> dict[str, Any]:
         if len(failures) >= 8:
             break
 
+    # Reservas que entraram em ação durante a execução. Um teste que passou
+    # usando reserva passou hoje e é um alerta para amanhã: o seletor primário
+    # já não encontra o elemento, e a reserva é a última linha de defesa.
+    reservas: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for match in re.finditer(r"CYGEN_RESERVA (.+?) >> (.+)", text):
+        pair = (match.group(1).strip(), match.group(2).strip())
+        if pair in seen:
+            continue
+        seen.add(pair)
+        reservas.append({"from": pair[0], "to": pair[1]})
+
+    # As mensagens de encerramento que cada teste imprimiu. Voltam para a
+    # interface porque são a leitura mais direta do que aconteceu: "Teste de
+    # Login para o user ana concluído" diz mais que "1 passing".
+    notas: list[str] = []
+    for match in re.finditer(r"✓ (Teste de .+?concluído)", text):
+        nota = match.group(1).strip()
+        if nota not in notas:
+            notas.append(nota)
+
     return {
+        "notas": notas[:20],
         "tests": count("Tests"),
         "passing": count("Passing"),
         "failing": count("Failing"),
         "durationMs": duration_ms,
         "failures": failures,
+        "reservas": reservas[:12],
     }
 
 

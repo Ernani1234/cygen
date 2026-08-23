@@ -16,6 +16,23 @@ from ..intel.selectors import SelectorEngine, suggest_test_attr
 from .ir import Check, Command, Spec, Target
 
 
+def _fallback_value(cand: dict[str, Any]) -> str:
+    """Seletor de reserva numa forma que diga por si só como ser resolvido.
+
+    A reserva é só uma string quando chega na IR, e a estratégia dela se perde
+    aí. Um candidato de texto (`Entrar`) entregue cru era interpretado como CSS
+    tanto pelo Playwright quanto pelo Cypress e nunca casava com nada — a
+    reserva existia no arquivo e era inútil na prática.
+
+    Marcamos com o prefixo `text=`, que é a sintaxe nativa do Playwright e
+    que o emissor traduz para o equivalente jQuery. XPath continua reconhecível
+    pela própria forma (`//...`).
+    """
+    if cand.get("engine") == "text":
+        return f"text={cand['value']}"
+    return cand["value"]
+
+
 def _target_from_plan(plan: dict[str, Any]) -> Target | None:
     primary = plan.get("primary")
     if not primary:
@@ -25,7 +42,7 @@ def _target_from_plan(plan: dict[str, Any]) -> Target | None:
     return Target(
         strategy=strategy,
         value=primary["value"],
-        fallbacks=[f["value"] for f in plan.get("fallbacks", [])],
+        fallbacks=[_fallback_value(f) for f in plan.get("fallbacks", [])],
         confidence=primary.get("score", 0.0),
         note=primary.get("why", ""),
     )
@@ -93,7 +110,7 @@ def build_spec(
         # --- seletor -------------------------------------------------------
         target: Target | None = None
         if step.kind != "visit" and step.element:
-            plan = engine.plan(step.element).to_dict()
+            plan = engine.plan(step.element, override=step.selector_override).to_dict()
             step.selector = plan
             target = _target_from_plan(plan)
             for warning in plan.get("warnings", []):

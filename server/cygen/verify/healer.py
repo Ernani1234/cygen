@@ -115,6 +115,26 @@ def _expects_absence(cmd: Command) -> bool:
     return any(check.name in _ABSENCE_ASSERTIONS for check in cmd.checks)
 
 
+def _marked(strategy: str, value: str) -> str:
+    """Alvo → a forma marcada que as reservas usam na IR.
+
+    Reserva é uma string solta: sem o prefixo, um alvo de texto rebaixado a
+    reserva volta como CSS na próxima cura e não casa com nada.
+    """
+    if strategy == "text":
+        return f"text={value}"
+    return value
+
+
+def _unmarked(candidate: str) -> tuple[str, str]:
+    """Reserva marcada → (estratégia, valor) para virar alvo primário."""
+    if candidate.startswith("text="):
+        return "text", candidate[5:]
+    if candidate.startswith("//") or candidate.startswith("/html"):
+        return "xpath", candidate
+    return "css", candidate
+
+
 def _playwright_selector(target: Target) -> str:
     """Converte um alvo da IR para a sintaxe de seletor do Playwright."""
     if target.strategy == "text":
@@ -375,8 +395,15 @@ class Healer:
             # Sem espera: o elemento já teve seu tempo na tentativa do
             # primário. Esperar de novo por reserva multiplicaria o timeout.
             if await self._count(page, selector, wait=False) == 1:
-                old = cmd.target.value
-                cmd.target.value = candidate
+                old = _marked(cmd.target.strategy, cmd.target.value)
+                # A reserva carrega a própria estratégia no prefixo. Promover
+                # só o valor deixava um alvo de texto marcado como CSS, e o
+                # emissor gerava `cy.get('text=Entrar')` — um seletor que não
+                # casa com nada e reintroduz, no arquivo final, exatamente a
+                # falha que a cura acabou de consertar.
+                strategy, value = _unmarked(candidate)
+                cmd.target.strategy = strategy
+                cmd.target.value = value
                 cmd.target.fallbacks = [
                     f for f in cmd.target.fallbacks if f != candidate
                 ]

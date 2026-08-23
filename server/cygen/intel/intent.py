@@ -54,6 +54,11 @@ class Step:
     evidence: dict[str, Any] = field(default_factory=dict)
     assertions: list[dict[str, Any]] = field(default_factory=list)
     selector: dict[str, Any] | None = None
+    # Seletor fixado pelo usuário para este passo: `{"value", "engine",
+    # "source"}`. Vive fora de `selector` porque `selector` é recalculado a
+    # cada geração — guardar a escolha lá dentro a apagaria no primeiro
+    # "Gerar código" seguinte.
+    selector_override: dict[str, Any] | None = None
     group: str = ""                             # nome do bloco semântico
     notes: list[str] = field(default_factory=list)
     source_events: list[int] = field(default_factory=list)
@@ -68,7 +73,8 @@ class Step:
             "index": self.index, "kind": self.kind, "element": self.element,
             "value": self.value, "label": self.label, "url": self.url,
             "evidence": self.evidence, "assertions": self.assertions,
-            "selector": self.selector, "group": self.group, "notes": self.notes,
+            "selector": self.selector, "selectorOverride": self.selector_override,
+            "group": self.group, "notes": self.notes,
             "sourceEvents": self.source_events, "enabled": self.enabled,
             "meta": self.meta,
         }

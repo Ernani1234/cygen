@@ -16,7 +16,7 @@ import re
 import unicodedata
 from typing import Any
 
-from .ir import Check, Command, Spec, Target
+from .ir import Check, Command, Spec, Suite, Target
 
 INDENT = "  "
 
@@ -63,6 +63,38 @@ def js_value(value: Any) -> str:
 # Alvos
 # ---------------------------------------------------------------------------
 
+def runtime_chain(target: Target | None) -> list[str]:
+    """Cadeia de seletores que o teste pode tentar em ordem, em execução.
+
+    Candidatos de texto mantêm o prefixo `text=` em vez de virar `:contains()`.
+    A tradução parece equivalente e não é: `:contains()` casa com todo ancestral
+    que contenha o texto — `html`, `body`, cada `div` no caminho —, e um
+    `.click()` sobre isso falha por ambiguidade. Quem sabe descer até o
+    elemento certo é o `cy.alvo`, em execução.
+
+    Só vale a pena quando existe mais de uma opção resolvível pelo Cypress.
+    XPath fica de fora: não existe sem plugin, e uma reserva que sempre lança
+    erro atrasa a cadeia inteira em vez de salvá-la.
+    """
+    if target is None or target.strategy not in ("css", "text"):
+        return []
+
+    primary = f"text={target.value}" if target.strategy == "text" else target.value
+    chain = [primary]
+    for fb in target.fallbacks:
+        if fb.startswith("//") or fb.startswith("/html"):
+            continue
+        if fb not in chain:
+            chain.append(fb)
+
+    return chain if len(chain) > 1 else []
+
+
+def emit_chain(chain: list[str]) -> str:
+    """Cadeia → `cy.alvo([...])`."""
+    return f"cy.alvo([{', '.join(js_string(s) for s in chain)}])"
+
+
 def emit_target(target: Target | None) -> str:
     """Alvo da IR → expressão Cypress que o resolve."""
     if target is None:
@@ -73,6 +105,13 @@ def emit_target(target: Target | None) -> str:
         return "cy.title()"
     if target.strategy == "window":
         return "cy.window()"
+
+    # Havendo reservas, o alvo vira uma cadeia: `cy.alvo` tenta cada uma antes
+    # de desistir, e o passo sobrevive à mudança que derrubou o primário.
+    chain = runtime_chain(target)
+    if chain:
+        return emit_chain(chain)
+
     if target.strategy == "text":
         return f"cy.contains({js_string(target.value)})"
     if target.strategy == "role":
@@ -250,8 +289,11 @@ def emit_command(cmd: Command, indent: str, *, verbose: bool) -> list[str]:
         for wrapped in _wrap(note, 84):
             lines.append(f"{indent}// ⓘ {wrapped}")
 
-    # Cadeia de reserva documentada no código: é o que a auto-cura consome.
-    if cmd.target and cmd.target.fallbacks and cmd.op in ("click", "type", "select", "check"):
+    # A cadeia normalmente já está no próprio código, dentro do `cy.alvo`.
+    # Quando não está — alvo por XPath, ou reserva única — documentamos as
+    # alternativas em comentário para a auto-cura e para quem for editar.
+    if (cmd.target and cmd.target.fallbacks and not runtime_chain(cmd.target)
+            and cmd.op in ("click", "type", "select", "check")):
         alts = " | ".join(cmd.target.fallbacks[:3])
         lines.append(f"{indent}// reservas: {alts}")
 
@@ -331,13 +373,21 @@ def _wrap(text: str, width: int) -> list[str]:
 # Documento completo
 # ---------------------------------------------------------------------------
 
-def emit(spec: Spec, *, verbose: bool = True, split_groups: bool = False) -> str:
-    """Spec da IR → conteúdo completo de um arquivo `.cy.js`."""
+def emit(spec: Spec, *, verbose: bool = True, split_groups: bool = False,
+         header: str = "", closing: list[str] | None = None) -> str:
+    """Spec da IR → conteúdo completo de um arquivo `.cy.js`.
+
+    `header` entra logo abaixo da diretiva de tipos — é onde ficam os imports
+    das fixtures. `closing` fecha cada teste.
+    """
     out: list[str] = []
     a = out.append
 
     a("/// <reference types=\"cypress\" />")
     a("")
+    if header:
+        a(header)
+        a("")
     a("/**")
     a(f" * {spec.name}")
     if spec.description:
@@ -389,14 +439,104 @@ def emit(spec: Spec, *, verbose: bool = True, split_groups: bool = False) -> str
     else:
         title = spec.description or f"executa o fluxo: {spec.name}"
         a(f"{INDENT}it({js_string(title)}, () => {{")
-        current_group = None
-        for cmd in spec.commands:
-            if verbose and cmd.group and cmd.group != current_group:
-                if current_group is not None:
-                    a("")
-                a(f"{INDENT * 2}// ── {cmd.group} ──")
-                current_group = cmd.group
-            out.extend(emit_command(cmd, INDENT * 2, verbose=verbose))
+        out.extend(_emit_body(spec, INDENT * 2, verbose=verbose, closing=closing))
+        a(f"{INDENT}}});")
+
+    a("});")
+    a("")
+    return "\n".join(out)
+
+
+def _emit_body(spec: Spec, indent: str, *, verbose: bool,
+               closing: list[str] | None = None) -> list[str]:
+    """Os comandos de um fluxo, já com os separadores de bloco.
+
+    `closing` são linhas que fecham o teste — o aviso de conclusão. Elas
+    entram por aqui, e não coladas no texto depois, porque só quem monta o
+    corpo sabe onde ele termina: procurar o `});` final num arquivo pronto
+    acertaria o `it()` errado assim que houvesse um bloco aninhado.
+    """
+    out: list[str] = []
+    current_group = None
+    for cmd in spec.commands:
+        if verbose and cmd.group and cmd.group != current_group:
+            if current_group is not None:
+                out.append("")
+            out.append(f"{indent}// ── {cmd.group} ──")
+            current_group = cmd.group
+        out.extend(emit_command(cmd, indent, verbose=verbose))
+    if closing:
+        out.extend(closing)
+    return out
+
+
+def emit_suite(suite: Suite, *, verbose: bool = True, header: str = "",
+               closing_for: Any = None, body_for: Any = None) -> str:
+    """Vários fluxos → um `.cy.js` com um `it()` por fluxo.
+
+    A decisão que define o arquivo é o isolamento entre testes. Desde a versão
+    12, o Cypress limpa cookies e armazenamento antes de cada `it()`: é o
+    comportamento certo para testes independentes, e o exato oposto do que uma
+    sequência precisa — o segundo teste acordaria deslogado, e a falha
+    apontaria para o seletor da tela de login em vez da causa real.
+
+    Por isso a sequência nasce com `testIsolation: false`, e quem quiser testes
+    de fato independentes liga o isolamento na tela da sequência. A escolha
+    fica escrita no arquivo, não escondida numa configuração global.
+    """
+    out: list[str] = []
+    a = out.append
+
+    a("/// <reference types=\"cypress\" />")
+    a("")
+    if header:
+        a(header)
+        a("")
+    a("/**")
+    a(f" * {suite.name}")
+    if suite.description:
+        for line in _wrap(suite.description, 76):
+            a(f" * {line}")
+    a(" *")
+    a(f" * Sequência de {len(suite.specs)} testes, gerada pelo Cygen. Cada `it()`")
+    a(" * é um fluxo gravado, e eles rodam na ordem em que aparecem abaixo.")
+    if not suite.isolate:
+        a(" *")
+        a(" * `testIsolation: false` mantém sessão, cookies e armazenamento entre")
+        a(" * os testes — é o que permite o segundo continuar de onde o primeiro")
+        a(" * parou. Em troca, um teste que falha no meio pode derrubar os")
+        a(" * seguintes: ao investigar, comece sempre pela primeira falha.")
+    if suite.env_keys:
+        a(" *")
+        a(" * Credenciais vêm de variáveis de ambiente (nunca do código):")
+        for key in suite.env_keys:
+            a(f" *   CYPRESS_{key}=...")
+    a(" */")
+    a("")
+
+    if suite.warnings:
+        a("// ─── Pontos de atenção ───────────────────────────────────────────")
+        for warning in suite.warnings:
+            for line in _wrap(warning, 74):
+                a(f"//  {line}")
+        a("")
+
+    options = "" if suite.isolate else ", { testIsolation: false }"
+    a(f"describe({js_string(suite.name)}{options}, () => {{")
+
+    for i, spec in enumerate(suite.specs):
+        if i:
+            a("")
+        if verbose and spec.description:
+            for line in _wrap(spec.description, 72):
+                a(f"{INDENT}// {line}")
+        a(f"{INDENT}it({js_string(spec.name)}, () => {{")
+        if body_for:
+            # O fluxo mora num comando nomeado; aqui fica só a chamada.
+            out.extend(body_for(spec))
+        else:
+            out.extend(_emit_body(spec, INDENT * 2, verbose=verbose,
+                                  closing=closing_for(spec) if closing_for else None))
         a(f"{INDENT}}});")
 
     a("});")

@@ -83,11 +83,29 @@ class Provider:
     docs: str = ""
     local: bool = False                # roda na máquina do usuário
     note: str = ""
+    # O que o provedor oferece sem cartão de crédito. Vazio = só pago.
+    # Existe porque "qual eu uso sem pagar?" é a primeira pergunta de quem
+    # abre a lista, e ela não se responde olhando preço por token: um preço
+    # baixo ainda exige cadastrar cartão.
+    free_tier: str = ""
+    signup: str = ""                   # onde se pega a chave, direto
 
     def key(self) -> str | None:
-        """Chave da primeira variável de ambiente definida."""
+        """A chave deste provedor, do ambiente ou do arquivo do usuário.
+
+        O ambiente vence. Quem já mantém a chave numa variável — em CI, num
+        gerenciador de segredos — não deve ser sobreposto por algo que digitou
+        na tela meses atrás e esqueceu.
+        """
         for name in self.env_keys:
             value = os.environ.get(name)
+            if value:
+                return value.strip()
+
+        from ..store import Keys
+        guardadas = Keys().all()
+        for name in self.env_keys:
+            value = guardadas.get(name)
             if value:
                 return value.strip()
         return None
@@ -111,6 +129,8 @@ class Provider:
             "models": [m.to_dict() for m in self.models],
             "docs": self.docs, "local": self.local, "note": self.note,
             "configured": self.configured(),
+            "freeTier": self.free_tier, "signup": self.signup,
+            "free": bool(self.free_tier),
         }
 
 
@@ -135,6 +155,7 @@ NATIVE = Provider(
               context=0, input_price=0.0, output_price=0.0,
               caps=frozenset({CAP_JSON})),
     ),
+    free_tier="Já vem pronto: roda local, sem chave, sem rede e sem custo.",
     note="Deduz assertions a partir do que a página fez, por regras explícitas. "
          "Sem chave, sem rede, sem latência, sem custo — e sem alucinar, porque "
          "não gera texto: só reconhece padrões no que foi observado.",
@@ -196,6 +217,9 @@ GOOGLE = Provider(
     base_url="https://generativelanguage.googleapis.com/v1beta",
     env_keys=("GEMINI_API_KEY", "GOOGLE_API_KEY", "CYGEN_GEMINI_KEY"),
     docs="https://ai.google.dev/docs",
+    signup="https://aistudio.google.com/apikey",
+    free_tier="Camada gratuita no AI Studio, com limite por minuto e por dia. "
+              "Chave em dois cliques, sem cartão.",
     models=(
         _m("gemini-2.0-flash", "Gemini 2.0 Flash", 1_000_000, 0.1, 0.4,
            caps=_COMMON | {CAP_VISION}),
@@ -211,6 +235,8 @@ MISTRAL = Provider(
     base_url="https://api.mistral.ai/v1",
     env_keys=("MISTRAL_API_KEY",),
     docs="https://docs.mistral.ai",
+    signup="https://console.mistral.ai/api-keys",
+    free_tier="Camada experimental gratuita, com limite por minuto.",
     models=(
         _m("mistral-large-latest", "Mistral Large", 128_000, 2.0, 6.0),
         _m("codestral-latest", "Codestral (código)", 256_000, 0.3, 0.9),
@@ -223,6 +249,9 @@ GROQ = Provider(
     base_url="https://api.groq.com/openai/v1",
     env_keys=("GROQ_API_KEY",),
     docs="https://console.groq.com/docs",
+    signup="https://console.groq.com/keys",
+    free_tier="Gratuito com limite por minuto. É o mais rápido da lista — "
+              "boa escolha para revisar um teste sem esperar.",
     models=(
         _m("llama-3.3-70b-versatile", "Llama 3.3 70B", 128_000, 0.59, 0.79),
         _m("llama-3.1-8b-instant", "Llama 3.1 8B", 128_000, 0.05, 0.08),
@@ -305,7 +334,19 @@ OPENROUTER = Provider(
     base_url="https://openrouter.ai/api/v1",
     env_keys=("OPENROUTER_API_KEY",),
     docs="https://openrouter.ai/docs",
+    signup="https://openrouter.ai/keys",
+    free_tier="Modelos com sufixo `:free` não custam nada — os primeiros da "
+              "lista abaixo. Uma chave só dá acesso a todos.",
     models=(
+        # Os `:free` vêm primeiro: são o padrão quando ninguém escolhe modelo.
+        _m("deepseek/deepseek-r1:free", "DeepSeek R1 (grátis)", 64_000, 0.0, 0.0,
+           caps=_COMMON | {CAP_THINKING}),
+        _m("meta-llama/llama-3.3-70b-instruct:free", "Llama 3.3 70B (grátis)",
+           128_000, 0.0, 0.0),
+        _m("qwen/qwen-2.5-coder-32b-instruct:free", "Qwen 2.5 Coder 32B (grátis)",
+           32_768, 0.0, 0.0),
+        _m("google/gemini-2.0-flash-exp:free", "Gemini 2.0 Flash exp (grátis)",
+           1_000_000, 0.0, 0.0),
         _m("anthropic/claude-opus-5", "Claude Opus 5 (via OpenRouter)",
            1_000_000, 5.0, 25.0),
         _m("openai/gpt-4o", "GPT-4o (via OpenRouter)", 128_000, 2.5, 10.0),
@@ -314,6 +355,25 @@ OPENROUTER = Provider(
     ),
     note="Dá acesso a centenas de modelos com uma única chave. Use o id no "
          "formato `fornecedor/modelo`.",
+)
+
+CLOUDFLARE = Provider(
+    id="cloudflare", label="Cloudflare Workers AI", dialect=DIALECT_OPENAI,
+    # O endpoint carrega o id da conta; sem ele o provedor não tem para onde
+    # apontar, e por isso ele fica fora da lista de prontos até ser definido.
+    base_url=(f"https://api.cloudflare.com/client/v4/accounts/"
+              f"{os.environ.get('CLOUDFLARE_ACCOUNT_ID', '')}/ai/v1"),
+    env_keys=("CLOUDFLARE_API_TOKEN", "CF_API_TOKEN"),
+    docs="https://developers.cloudflare.com/workers-ai",
+    signup="https://dash.cloudflare.com/profile/api-tokens",
+    free_tier="Cota diária gratuita, renovada todo dia. Precisa também de "
+              "CLOUDFLARE_ACCOUNT_ID.",
+    models=(
+        _m("@cf/meta/llama-3.3-70b-instruct-fp8-fast", "Llama 3.3 70B",
+           24_000, 0.0, 0.0),
+        _m("@cf/qwen/qwen2.5-coder-32b-instruct", "Qwen 2.5 Coder 32B",
+           32_768, 0.0, 0.0),
+    ),
 )
 
 AZURE = Provider(
@@ -364,8 +424,12 @@ NVIDIA = Provider(
     base_url="https://integrate.api.nvidia.com/v1",
     env_keys=("NVIDIA_API_KEY", "NVIDIA_NIM_API_KEY"),
     docs="https://docs.nvidia.com/nim",
+    signup="https://build.nvidia.com",
+    free_tier="Créditos gratuitos ao criar conta, sem cartão.",
     models=(
         _m("meta/llama-3.3-70b-instruct", "Llama 3.3 70B", 128_000, 0.0, 0.0),
+        _m("qwen/qwen2.5-coder-32b-instruct", "Qwen 2.5 Coder 32B",
+           32_768, 0.0, 0.0),
     ),
 )
 
@@ -374,6 +438,8 @@ CEREBRAS = Provider(
     base_url="https://api.cerebras.ai/v1",
     env_keys=("CEREBRAS_API_KEY",),
     docs="https://inference-docs.cerebras.ai",
+    signup="https://cloud.cerebras.ai",
+    free_tier="Camada gratuita com limite diário de tokens.",
     models=(
         _m("llama-3.3-70b", "Llama 3.3 70B", 128_000, 0.85, 1.2),
     ),
@@ -381,11 +447,15 @@ CEREBRAS = Provider(
 
 HUGGINGFACE = Provider(
     id="huggingface", label="Hugging Face", dialect=DIALECT_OPENAI,
-    base_url="https://api-inference.huggingface.co/v1",
+    base_url="https://router.huggingface.co/v1",
     env_keys=("HF_TOKEN", "HUGGINGFACE_API_KEY"),
-    docs="https://huggingface.co/docs/api-inference",
+    docs="https://huggingface.co/docs/inference-providers",
+    signup="https://huggingface.co/settings/tokens",
+    free_tier="Cota mensal gratuita para contas comuns.",
     models=(
         _m("meta-llama/Llama-3.3-70B-Instruct", "Llama 3.3 70B", 128_000, 0.0, 0.0),
+        _m("Qwen/Qwen2.5-Coder-32B-Instruct", "Qwen 2.5 Coder 32B",
+           32_768, 0.0, 0.0),
     ),
 )
 
@@ -394,10 +464,13 @@ GITHUB = Provider(
     base_url="https://models.inference.ai.azure.com",
     env_keys=("GITHUB_TOKEN", "GH_TOKEN"),
     docs="https://docs.github.com/github-models",
+    signup="https://github.com/settings/tokens",
+    free_tier="Gratuito com limite de requisições, usando um token comum do "
+              "GitHub — sem cadastro novo se você já tem conta.",
     models=(
         _m("gpt-4o", "GPT-4o (GitHub)", 128_000, 0.0, 0.0),
+        _m("gpt-4o-mini", "GPT-4o mini (GitHub)", 128_000, 0.0, 0.0),
     ),
-    note="Gratuito com limites de uso, usando o mesmo token do GitHub.",
 )
 
 OLLAMA = Provider(
@@ -406,6 +479,7 @@ OLLAMA = Provider(
     env_keys=(),
     local=True,
     docs="https://ollama.com",
+    free_tier="Roda na sua máquina: sem chave, sem cota, sem custo.",
     models=(
         _m("qwen2.5-coder:14b", "Qwen 2.5 Coder 14B", 32_768, 0.0, 0.0),
         _m("llama3.3", "Llama 3.3", 128_000, 0.0, 0.0),
@@ -422,6 +496,7 @@ LMSTUDIO = Provider(
     env_keys=(),
     local=True,
     docs="https://lmstudio.ai/docs",
+    free_tier="Roda na sua máquina: sem chave, sem cota, sem custo.",
     models=(
         _m("local-model", "Modelo carregado no LM Studio", 32_768, 0.0, 0.0),
     ),
@@ -430,8 +505,8 @@ LMSTUDIO = Provider(
 
 PROVIDERS: tuple[Provider, ...] = (
     NATIVE, ANTHROPIC, OPENAI, GOOGLE, MISTRAL, GROQ, DEEPSEEK, XAI, COHERE,
-    TOGETHER, FIREWORKS, PERPLEXITY, OPENROUTER, AZURE, MOONSHOT, DASHSCOPE,
-    ZHIPU, NVIDIA, CEREBRAS, HUGGINGFACE, GITHUB, OLLAMA, LMSTUDIO,
+    TOGETHER, FIREWORKS, PERPLEXITY, OPENROUTER, CLOUDFLARE, AZURE, MOONSHOT,
+    DASHSCOPE, ZHIPU, NVIDIA, CEREBRAS, HUGGINGFACE, GITHUB, OLLAMA, LMSTUDIO,
 )
 
 BY_ID: dict[str, Provider] = {p.id: p for p in PROVIDERS}
@@ -469,10 +544,46 @@ def catalog() -> list[dict[str, Any]]:
     return [p.to_dict() for p in PROVIDERS]
 
 
+def free() -> list[Provider]:
+    """Provedores com camada gratuita — inclusive os locais."""
+    return [p for p in PROVIDERS if p.free_tier]
+
+
 def stats() -> dict[str, int]:
     return {
         "providers": len(PROVIDERS),
         "models": sum(len(p.models) for p in PROVIDERS),
         "configured": len(configured()),
         "local": sum(1 for p in PROVIDERS if p.local),
+        "free": len(free()),
     }
+
+
+def set_key(provider_id: str, value: str, *, persist: bool = True) -> bool:
+    """Guarda a chave deste provedor.
+
+    O Cygen nunca grava segredo em arquivo — é uma decisão de projeto, não um
+    detalhe: `settings.json` fica no disco do usuário, entra em backup e sai em
+    print de tela. Mas exigir que a pessoa saiba definir variável de ambiente
+    antes de experimentar um provedor gratuito é uma barreira alta demais para
+    o que ela quer, que é ver se vale a pena.
+
+    Com `persist`, ela vai também para o arquivo de chaves do usuário — fora
+    do projeto e fora do git — e sobrevive a fechar o app. Sem, vale só nesta
+    sessão. O auto-teste depende de uma chave presente, e pedir a mesma chave
+    toda vez que o app abre não é uma decisão de segurança, é um incômodo.
+    """
+    provider = BY_ID.get(provider_id)
+    if not provider or not provider.env_keys:
+        return False
+
+    nome = provider.env_keys[0]
+    if value.strip():
+        os.environ[nome] = value.strip()
+    else:
+        os.environ.pop(nome, None)
+
+    if persist:
+        from ..store import Keys
+        Keys().set(nome, value)
+    return True

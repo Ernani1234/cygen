@@ -143,6 +143,14 @@ class SelectorPlan:
     primary: Candidate | None
     fallbacks: list[Candidate] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+    # Todos os candidatos gerados, não só os que entraram na cadeia. A escolha
+    # automática acerta na maioria das vezes e erra em algumas — quem conhece a
+    # aplicação sabe que `[name="user"]` vai sobreviver ao redesign e que o
+    # `#id` não. Sem esta lista, discordar do ranking exigia editar o arquivo
+    # gerado à mão, e a edição se perdia na próxima geração.
+    candidates: list[Candidate] = field(default_factory=list)
+    # Preenchido quando o usuário fixou um seletor para este elemento.
+    override: dict[str, Any] | None = None
 
     @property
     def confidence(self) -> float:
@@ -152,8 +160,10 @@ class SelectorPlan:
         return {
             "primary": self.primary.to_dict() if self.primary else None,
             "fallbacks": [c.to_dict() for c in self.fallbacks],
+            "candidates": [c.to_dict() for c in self.candidates],
             "warnings": self.warnings,
             "confidence": round(self.confidence, 3),
+            "override": self.override,
         }
 
 
@@ -335,12 +345,23 @@ class SelectorEngine:
 
     # -- plano final --------------------------------------------------------
 
-    def plan(self, el: dict[str, Any], *, max_fallbacks: int = 3) -> SelectorPlan:
-        """Cadeia primário + reservas, com avisos sobre riscos detectados."""
+    def plan(self, el: dict[str, Any], *, max_fallbacks: int = 3,
+             override: dict[str, Any] | None = None) -> SelectorPlan:
+        """Cadeia primário + reservas, com avisos sobre riscos detectados.
+
+        `override` é a escolha do usuário para este elemento. Ela vence o
+        ranking automático — mas não apaga o resto: os candidatos gerados
+        continuam disponíveis como reserva, porque a nota deles não deixou de
+        valer só porque outro seletor foi promovido à frente.
+        """
         cands = [c for c in self.candidates(el) if c.score > 0]
+        if override and str(override.get("value") or "").strip():
+            return self._with_override(cands, override, max_fallbacks)
+
         if not cands:
             return SelectorPlan(
                 primary=None,
+                candidates=[],
                 warnings=["Nenhum seletor confiável pôde ser derivado deste elemento."],
             )
 
@@ -372,7 +393,49 @@ class SelectorEngine:
                 f"O seletor primário casa com {primary.matches} elementos; "
                 "Cypress vai agir sobre o primeiro."
             )
-        return SelectorPlan(primary=primary, fallbacks=fallbacks, warnings=warnings)
+        return SelectorPlan(primary=primary, fallbacks=fallbacks,
+                            candidates=cands, warnings=warnings)
+
+    def _with_override(self, cands: list[Candidate], override: dict[str, Any],
+                       max_fallbacks: int) -> SelectorPlan:
+        """Plano com o seletor que o usuário escolheu na frente.
+
+        Dois casos, e a diferença importa. Se ele promoveu um candidato que já
+        existia, mantemos a nota medida — mentir que passou a valer 100% seria
+        esconder que o seletor casa com quatro elementos. Se ele digitou um
+        seletor próprio, não temos medição nenhuma: registramos como escolha
+        manual e deixamos a verificação contra a aplicação dizer se resolve.
+        """
+        value = str(override["value"]).strip()
+        engine = override.get("engine") or "css"
+        kind = {"text": "text", "xpath": "xpath"}.get(engine, "css")
+
+        existing = next((c for c in cands if c.value == value), None)
+        if existing:
+            primary = Candidate(
+                value=existing.value, kind=existing.kind, score=existing.score,
+                matches=existing.matches, engine=existing.engine,
+                why=f"Fixado por você. {existing.why}",
+            )
+        else:
+            primary = Candidate(
+                value=value, kind=kind, score=1.0, matches=None, engine=engine,
+                why="Seletor escrito por você — o ranking automático não opina "
+                    "sobre ele; rode a verificação para saber se resolve.",
+            )
+
+        fallbacks = [c for c in cands if c.value != value][:max_fallbacks]
+
+        warnings: list[str] = []
+        if not existing:
+            warnings.append(
+                f"O seletor `{value}` foi definido manualmente e nunca foi "
+                "medido contra a aplicação. Use “Verificar e curar” antes de "
+                "confiar nele."
+            )
+        return SelectorPlan(primary=primary, fallbacks=fallbacks,
+                            candidates=cands, warnings=warnings,
+                            override=dict(override))
 
 
 def suggest_test_attr(el: dict[str, Any]) -> str:

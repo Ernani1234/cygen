@@ -70,6 +70,14 @@
       <svg viewBox="0 0 24 24"><use href="#i-flows"/></svg><span>Fluxos</span>
       <span class="nav-badge" id="navFlows">0</span>
     </button>
+    <button class="nav-item" data-view="auto">
+      <svg viewBox="0 0 24 24"><use href="#i-sparkle"/></svg><span>Auto-teste</span>
+      <span class="nav-badge live" id="navAuto" hidden>IA</span>
+    </button>
+    <button class="nav-item" data-view="suites">
+      <svg viewBox="0 0 24 24"><use href="#i-list"/></svg><span>Sequências</span>
+      <span class="nav-badge" id="navSuites">0</span>
+    </button>
     <button class="nav-item" data-view="code">
       <svg viewBox="0 0 24 24"><use href="#i-code"/></svg><span>Código</span>
     </button>
@@ -227,12 +235,273 @@
       <div class="grid c3 stagger" id="flowList"></div>
     </section>
 
+    <!-- ---------- Auto-teste ---------- -->
+    <section class="view" id="view-auto" hidden>
+      <div class="view-head">
+        <h2>Auto-teste</h2>
+        <p>Descreva o que a IA deve testar e ela explora o sistema sozinha —
+           entra, navega, preenche e clica — devolvendo um fluxo gravado por
+           jornada. Você revisa, gera o código e roda como qualquer outro.</p>
+      </div>
+
+      <div id="autoSetup">
+        <div class="grid c2" style="align-items:start">
+          <div class="card">
+            <div class="card-title">O sistema</div>
+            <div class="field mt">
+              <label for="autoUrl">Endereço</label>
+              <input class="input" id="autoUrl" type="url"
+                     placeholder="https://homologacao.suaempresa.com.br"
+                     autocomplete="off" spellcheck="false">
+              <span class="hint">Use homologação. O agente cria registros de verdade.</span>
+            </div>
+
+            <div class="row wrap mt" style="gap:12px;align-items:flex-end">
+              <div class="field grow" style="min-width:150px">
+                <label for="autoUser">Usuário</label>
+                <input class="input" id="autoUser" autocomplete="off"
+                       placeholder="para o agente entrar no sistema">
+              </div>
+              <div class="field grow" style="min-width:150px">
+                <label for="autoPass">Senha</label>
+                <input class="input" id="autoPass" type="password" autocomplete="off"
+                       placeholder="usada só durante a execução">
+              </div>
+            </div>
+            <div class="field mt">
+              <label for="autoLoginHow">Como entrar (se não for o comum)</label>
+              <input class="input" id="autoLoginHow"
+                     placeholder="ex.: clique em “Acessar”, escolha o perfil Administrador">
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">O que testar</div>
+            <div class="field mt">
+              <label for="autoScope">Tipo de teste</label>
+              <select class="input" id="autoScope">
+                <option value="objetivo">Objetivo específico — faz o que você descrever</option>
+                <option value="modulo">Um módulo a fundo</option>
+                <option value="rotas">Percorrer as rotas do menu</option>
+                <option value="completo">Cobertura ampla do sistema</option>
+              </select>
+            </div>
+            <div class="field mt">
+              <label for="autoGoal">Objetivo</label>
+              <textarea class="input" id="autoGoal" rows="3"
+                        placeholder="ex.: cadastre um cliente, gere um pedido para ele e aprove o pedido"></textarea>
+            </div>
+            <div class="field mt">
+              <label for="autoRules">Regras de negócio</label>
+              <textarea class="input" id="autoRules" rows="3"
+                        placeholder="ex.: o CNPJ precisa ser único; pedidos acima de R$ 5.000 exigem aprovação do gestor; não mexa em Faturamento"></textarea>
+              <span class="hint">Quanto mais específico, menos o agente tenta adivinhar.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt">
+          <div class="card-title">Limites</div>
+          <div class="row wrap mt" style="gap:18px;align-items:flex-end">
+            <div class="field" style="min-width:150px">
+              <label for="autoProvider">Provedor de IA</label>
+              <select class="input" id="autoProvider"></select>
+            </div>
+            <div class="field" style="min-width:150px">
+              <label for="autoModel">Modelo</label>
+              <select class="input" id="autoModel"></select>
+            </div>
+            <div class="field" style="min-width:110px">
+              <label for="autoSteps">Passos</label>
+              <input class="input" id="autoSteps" type="number" value="40" min="5" max="200">
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="autoHeadless">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span class="small muted">Sem janela</span>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="autoDestrutivo">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span class="small muted">Permitir ações destrutivas</span>
+            </label>
+          </div>
+          <div id="autoKeyWarn"></div>
+          <div class="row wrap mt" style="gap:9px">
+            <button class="btn primary" id="btnAutoStart">
+              <svg viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> Iniciar auto-teste
+            </button>
+            <button class="btn danger" id="btnAutoStop" hidden>
+              <svg viewBox="0 0 24 24"><use href="#i-stop"/></svg> Parar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="work mt" id="autoRun" hidden>
+        <aside class="work-side">
+          <div class="side-head">
+            <div class="row between">
+              <span class="small faint" id="autoSummary">explorando…</span>
+              <button class="btn danger sm" id="btnAutoStop2">Parar</button>
+            </div>
+          </div>
+          <div class="timeline side-scroll" id="autoSteps"></div>
+        </aside>
+        <section class="work-main">
+          <div class="preview">
+            <div class="preview-bar">
+              <div class="preview-lights"><i style="background:#ff5f57"></i>
+                <i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+              <div class="preview-url" id="autoUrlNow">—</div>
+            </div>
+            <div class="preview-frame" id="autoFrame">
+              <div class="muted small">abrindo o navegador…</div>
+            </div>
+          </div>
+          <div id="autoResult"></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- ---------- Sequências ---------- -->
+    <section class="view" id="view-suites" hidden>
+      <div class="view-head">
+        <h2 id="suiteTitle">Sequências</h2>
+        <p id="suiteSub">Vários fluxos num arquivo só, na ordem em que devem rodar.
+           Cada fluxo vira um <code class="mono">it()</code>, e o arquivo leva o nome
+           da sequência.</p>
+      </div>
+
+      <!-- Lista -->
+      <div id="suiteBrowse">
+        <div class="row wrap" style="gap:9px;margin-bottom:16px">
+          <button class="btn primary" id="btnNewSuite">
+            <svg viewBox="0 0 24 24"><use href="#i-list"/></svg> Nova sequência
+          </button>
+        </div>
+        <div class="grid c3 stagger" id="suiteList"></div>
+      </div>
+
+      <!-- Sequência aberta -->
+      <div id="suiteWork" hidden>
+        <div class="work-bar">
+          <div class="row wrap" style="gap:9px">
+            <button class="btn ghost sm" id="btnBackSuites">
+              <svg viewBox="0 0 24 24" style="transform:rotate(180deg)"><use href="#i-chevron"/></svg>
+              Sequências
+            </button>
+            <button class="btn primary" id="btnSuiteGenerate">
+              <svg viewBox="0 0 24 24"><use href="#i-bolt"/></svg> Gerar código
+            </button>
+            <span class="grow"></span>
+            <span class="chip" id="suiteState" hidden></span>
+            <button class="btn ghost sm" id="btnSuiteMeta" aria-expanded="false">
+              <svg viewBox="0 0 24 24"><use href="#i-cog"/></svg> Ajustes
+            </button>
+          </div>
+
+          <div class="work-meta" id="suiteMeta" hidden>
+            <div class="row wrap" style="align-items:flex-end;gap:14px">
+              <div class="field grow" style="min-width:210px">
+                <label for="suiteName">Nome da sequência</label>
+                <input class="input" id="suiteName" placeholder="Jornada do cliente">
+                <span class="hint">vira o nome do arquivo e o <code class="mono">describe</code></span>
+              </div>
+              <div class="field grow" style="min-width:210px">
+                <label for="suiteDesc">O que ela cobre</label>
+                <input class="input" id="suiteDesc" placeholder="cadastro, aprovação e consulta">
+              </div>
+              <div class="field" style="min-width:190px">
+                <label for="suiteBase">URL base</label>
+                <input class="input" id="suiteBase" placeholder="https://qa.exemplo.com">
+              </div>
+            </div>
+            <label class="switch mt">
+              <input type="checkbox" id="suiteIsolate">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span class="small muted">Testes independentes — cada um recomeça com
+                sessão limpa. Desligado, o segundo continua de onde o primeiro parou.</span>
+            </label>
+            <label class="switch mt">
+              <input type="checkbox" id="suiteFixtures" checked>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+              <span class="small muted">Seletores em fixtures —
+                <code class="mono">elementos.usuario</code> no lugar da cadeia</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="work">
+          <aside class="work-side">
+            <div class="side-head">
+              <div class="row between">
+                <span class="small faint" id="suiteSummary">—</span>
+              </div>
+              <div class="row" style="gap:7px">
+                <select class="input sm grow" id="suiteAddPick">
+                  <option value="">Adicionar um fluxo…</option>
+                </select>
+                <button class="btn sm" id="btnSuiteAdd" style="flex:none">Incluir</button>
+              </div>
+            </div>
+            <div class="timeline side-scroll" id="suiteFlows"></div>
+          </aside>
+
+          <section class="work-main">
+            <div class="work-tabs" id="suiteTabs">
+              <button class="work-tab active" data-suite-pane="code">Código</button>
+              <button class="work-tab" data-suite-pane="project">Projeto</button>
+            </div>
+
+            <div class="work-pane" id="suitepane-code">
+              <div class="row wrap" style="gap:9px;margin-bottom:11px">
+                <button class="btn" id="btnSuiteCopy">
+                  <svg viewBox="0 0 24 24"><use href="#i-copy"/></svg> Copiar
+                </button>
+                <button class="btn" id="btnSuiteSave">
+                  <svg viewBox="0 0 24 24"><use href="#i-save"/></svg> Salvar o arquivo
+                </button>
+              </div>
+              <div class="code-shell">
+                <div class="code-tabs" id="suiteCodeTabs"></div>
+                <div class="code-edit">
+                  <pre class="code-body"><code id="suiteCodeOut">// Clique em “Gerar código”.</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="work-pane" id="suitepane-project" hidden>
+              <div class="row wrap" style="gap:9px">
+                <button class="btn primary" id="btnSuiteScaffold">
+                  <svg viewBox="0 0 24 24"><use href="#i-package"/></svg> Gerar projeto completo
+                </button>
+              </div>
+              <div class="empty" id="suiteProjectEmpty">
+                <div class="empty-art"><svg viewBox="0 0 24 24"><use href="#i-package"/></svg></div>
+                <h3>Nenhum projeto gerado ainda</h3>
+                <p>Gere o projeto para rodar a sequência inteira de uma vez, na ordem —
+                   daqui mesmo ou abrindo o Cypress.</p>
+                <div class="small muted">Será criado em</div>
+                <code class="mono small" id="suitePathHint"
+                      style="display:inline-block;margin-top:5px;padding:7px 11px;
+                             background:var(--bg-sunken);border-radius:var(--r);
+                             word-break:break-all"></code>
+              </div>
+              <div id="suiteScaffoldResult"></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
     <!-- ---------- Código ---------- -->
     <section class="view" id="view-code" hidden>
       <div class="view-head">
         <h2 id="codeTitle">Código gerado</h2>
-        <p id="codeSub">Revise os passos e as verificações à esquerda; o código à direita
-           se atualiza conforme você decide o que entra.</p>
+        <p id="codeSub">Os passos ficam à esquerda e o resultado à direita. Abra um passo
+           para trocar o seletor do elemento, ou escreva direto no código — o que você
+           editar é o que vai para o projeto, antes ou depois de rodar o teste.</p>
       </div>
 
       <div id="codeEmpty" class="empty">
@@ -245,22 +514,11 @@
       </div>
 
       <div id="codeWork" hidden>
-        <div class="card" style="margin-bottom:16px">
-          <div class="row wrap" style="align-items:flex-end;gap:14px">
-            <div class="field grow" style="min-width:220px">
-              <label for="specName">Nome do teste</label>
-              <input class="input" id="specName" placeholder="Login e acesso ao painel">
-            </div>
-            <div class="field grow" style="min-width:220px">
-              <label for="specDesc">O que ele valida</label>
-              <input class="input" id="specDesc" placeholder="valida a autenticação e a carga inicial">
-            </div>
-            <div class="field" style="min-width:200px">
-              <label for="specBase">URL base</label>
-              <input class="input" id="specBase" placeholder="https://qa.exemplo.com">
-            </div>
-          </div>
-          <div class="row wrap mt" style="gap:9px">
+        <!-- Barra de trabalho. As duas ações que movem o fluxo ficam sempre
+             visíveis; o que é configuração fica atrás de um clique, porque é
+             preenchido uma vez e revisitado quase nunca. -->
+        <div class="work-bar">
+          <div class="row wrap" style="gap:9px">
             <button class="btn primary" id="btnGenerate">
               <svg viewBox="0 0 24 24"><use href="#i-bolt"/></svg> Gerar código
             </button>
@@ -268,57 +526,137 @@
               <svg viewBox="0 0 24 24"><use href="#i-heal"/></svg> Verificar e curar
             </button>
             <span class="grow"></span>
-            <label class="switch">
-              <input type="checkbox" id="optVerbose" checked>
-              <span class="switch-track"><span class="switch-thumb"></span></span>
-              <span class="small muted">Comentários explicativos</span>
-            </label>
-            <label class="switch">
-              <input type="checkbox" id="optSplit">
-              <span class="switch-track"><span class="switch-thumb"></span></span>
-              <span class="small muted">Um it() por bloco</span>
-            </label>
+            <span class="chip" id="workState" hidden></span>
+            <button class="btn ghost sm" id="btnMeta" aria-expanded="false"
+                    aria-controls="workMeta">
+              <svg viewBox="0 0 24 24"><use href="#i-cog"/></svg> Ajustes
+            </button>
           </div>
-        </div>
 
-        <div id="genWarnings"></div>
-        <div id="verifyReport"></div>
-
-        <!-- As ações vêm antes do conteúdo longo. Com um fluxo de trinta
-             passos, deixá-las embaixo obrigava a rolar a página inteira para
-             gerar o projeto. -->
-        <div class="row wrap" style="gap:9px;margin-bottom:14px">
-          <button class="btn primary" id="btnScaffold"
-                  title="Cria um projeto Cypress que roda com npm install && npm test">
-            <svg viewBox="0 0 24 24"><use href="#i-package"/></svg> Gerar projeto completo
-          </button>
-          <button class="btn" id="btnCopy"><svg viewBox="0 0 24 24"><use href="#i-copy"/></svg> Copiar</button>
-          <button class="btn" id="btnSave"><svg viewBox="0 0 24 24"><use href="#i-save"/></svg> Salvar só o spec</button>
-          <span class="grow"></span>
-          <button class="btn ghost" id="btnAsk"><svg viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> Pedir revisão à IA</button>
-        </div>
-
-        <div id="scaffoldResult"></div>
-
-        <div class="panel mt" id="stepsPanel">
-          <button class="panel-head" id="stepsToggle" aria-expanded="false"
-                  aria-controls="stepsBody">
-            <svg class="panel-chevron" viewBox="0 0 24 24"><use href="#i-chevron"/></svg>
-            <span class="panel-title">Passos e verificações</span>
-            <span class="chip" id="stepSummary">—</span>
-            <span class="grow"></span>
-            <span class="small faint" id="stepsHint">mostrar</span>
-          </button>
-          <div class="panel-body" id="stepsBody">
-            <div>
-              <div class="timeline panel-scroll" id="stepList"></div>
+          <div class="work-meta" id="workMeta" hidden>
+            <div class="row wrap" style="align-items:flex-end;gap:14px">
+              <div class="field grow" style="min-width:210px">
+                <label for="specName">Nome do teste</label>
+                <input class="input" id="specName" placeholder="Login e acesso ao painel">
+              </div>
+              <div class="field grow" style="min-width:210px">
+                <label for="specDesc">O que ele valida</label>
+                <input class="input" id="specDesc" placeholder="valida a autenticação e a carga inicial">
+              </div>
+              <div class="field" style="min-width:190px">
+                <label for="specBase">URL base</label>
+                <input class="input" id="specBase" placeholder="https://qa.exemplo.com">
+              </div>
+            </div>
+            <div class="row wrap mt" style="gap:18px">
+              <label class="switch">
+                <input type="checkbox" id="optVerbose" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="small muted">Comentários explicativos</span>
+              </label>
+              <label class="switch">
+                <input type="checkbox" id="optSplit">
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="small muted">Um it() por bloco</span>
+              </label>
+              <label class="switch">
+                <input type="checkbox" id="optFixtures" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="small muted">Seletores em fixtures —
+                  <code class="mono">elementos.usuario</code> no lugar da cadeia</span>
+              </label>
             </div>
           </div>
         </div>
 
-        <div class="code-shell mt" style="max-height:66vh">
-          <div class="code-tabs" id="codeTabs"></div>
-          <pre class="code-body"><code id="codeOut">// Clique em “Gerar código”.</code></pre>
+        <div class="work">
+          <!-- Passos: coluna própria, com rolagem própria. Trinta passos não
+               podem empurrar o código para fora da tela. -->
+          <aside class="work-side">
+            <div class="side-head">
+              <input class="input sm" id="stepSearch" type="search"
+                     placeholder="Buscar por texto do passo ou seletor…"
+                     autocomplete="off">
+              <div class="seg" id="stepFilters">
+                <button class="seg-item active" data-filter="all">Todos</button>
+                <button class="seg-item" data-filter="weak">Seletor fraco</button>
+                <button class="seg-item" data-filter="pinned">Fixados</button>
+                <button class="seg-item" data-filter="issues">Com problema</button>
+              </div>
+              <div class="row between" style="gap:6px">
+                <span class="small faint grow truncate" id="stepSummary">—</span>
+                <button class="btn ghost sm" id="btnCollapseAll"
+                        style="flex:none;padding:4px 8px">recolher tudo</button>
+              </div>
+            </div>
+            <div class="timeline side-scroll" id="stepList"></div>
+          </aside>
+
+          <section class="work-main">
+            <div class="work-tabs" id="workTabs">
+              <button class="work-tab active" data-pane="code">Código</button>
+              <button class="work-tab" data-pane="diag">
+                Diagnóstico <span class="tab-badge" id="diagBadge" hidden>0</span>
+              </button>
+              <button class="work-tab" data-pane="project">Projeto</button>
+            </div>
+
+            <div class="work-pane" id="pane-code">
+              <div class="row wrap" style="gap:9px;margin-bottom:11px">
+                <button class="btn" id="btnCopy">
+                  <svg viewBox="0 0 24 24"><use href="#i-copy"/></svg> Copiar
+                </button>
+                <button class="btn" id="btnSave">
+                  <svg viewBox="0 0 24 24"><use href="#i-save"/></svg> Salvar só o spec
+                </button>
+                <span class="grow"></span>
+                <button class="btn ghost" id="btnAsk">
+                  <svg viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> Pedir revisão à IA
+                </button>
+              </div>
+              <div class="code-shell">
+                <div class="code-tabs" id="codeTabs"></div>
+                <!-- O textarea fica por cima do bloco realçado, alinhado ao
+                     pixel: quem rola e recebe o texto é ele; o realce embaixo
+                     acompanha. Assim dá para editar sem perder as cores. -->
+                <div class="code-edit" id="codeEdit">
+                  <pre class="code-body" aria-hidden="true"><code id="codeOut">// Clique em “Gerar código”.</code></pre>
+                  <textarea id="codeInput" spellcheck="false" wrap="off"
+                            autocomplete="off" autocapitalize="off"
+                            aria-label="Código gerado, editável"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="work-pane" id="pane-diag" hidden>
+              <div id="genWarnings"></div>
+              <div id="verifyReport"></div>
+              <div class="empty" id="diagEmpty">
+                <div class="empty-art"><svg viewBox="0 0 24 24"><use href="#i-heal"/></svg></div>
+                <h3>Nada a relatar ainda</h3>
+                <p>Gere o código para ver os pontos de atenção, e use
+                   “Verificar e curar” para rodar o fluxo contra a aplicação real.</p>
+              </div>
+            </div>
+
+            <div class="work-pane" id="pane-project" hidden>
+              <div id="projectStale"></div>
+              <div class="row wrap" style="gap:9px">
+                <button class="btn primary" id="btnScaffold"
+                        title="Cria um projeto Cypress que roda com npm install && npm test">
+                  <svg viewBox="0 0 24 24"><use href="#i-package"/></svg> Gerar projeto completo
+                </button>
+              </div>
+              <div class="empty" id="projectEmpty">
+                <div class="empty-art"><svg viewBox="0 0 24 24"><use href="#i-package"/></svg></div>
+                <h3>Nenhum projeto gerado ainda</h3>
+                <p>O projeto completo é uma pasta que roda sozinha: spec, configuração,
+                   comandos e o <code class="mono">cy.alvo</code> com as cadeias de reserva.
+                   Depois de gerar, dá para rodar a suíte e abrir o Cypress daqui mesmo.</p>
+              </div>
+              <div id="scaffoldResult"></div>
+            </div>
+          </section>
         </div>
       </div>
     </section>
@@ -446,6 +784,15 @@
           </p>
           <div class="col mt" id="providerList"></div>
         </div>
+      </div>
+
+      <div class="card mt">
+        <div class="card-title">Onde ficam os arquivos</div>
+        <p class="small muted" style="margin:2px 0 12px">
+          Fluxos e sequências são gravados como JSON na pasta de dados. Os projetos
+          Cypress — que você abre no editor e roda na mão — ficam em Documentos.
+        </p>
+        <div class="col" id="pathList"></div>
       </div>
 
       <div class="card mt">
